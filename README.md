@@ -1,2 +1,2 @@
-# LastwarSurvivalTrainChoice
-週間の車掌を抽選するシステム
+# LastwarSurvivalSeason6ダッシュボード
+シーズン6用ダッシュボード

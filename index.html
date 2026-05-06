@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Season 6 陣営対抗戦 戦力分析 | 9N1 Intelligence</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #0B0F14;
@@ -19,15 +20,15 @@
     --text: #E8E3D5;
     --text-dim: #8B9BB5;
     --text-dimmer: #5C6B85;
-    --blue: #4A90E2;
-    --blue-dim: #2C5F96;
-    --red: #E74C3C;
-    --red-dim: #9A2F22;
+    --blue: #2ECC71;
+    --blue-dim: #1E8449;
+    --red: #3498DB;
+    --red-dim: #1F618D;
     --green: #2ECC71;
     --gold: #D4AF37;
     --silver: #C0C0C0;
     --bronze: #CD7F32;
-    --tank: #4A90E2;
+    --tank: #708090;
     --missile: #E67E22;
     --aircraft: #9B59B6;
   }
@@ -39,8 +40,8 @@
   }
   body {
     background:
-      radial-gradient(ellipse at top left, rgba(74,144,226,0.05), transparent 50%),
-      radial-gradient(ellipse at top right, rgba(231,76,60,0.05), transparent 50%),
+      radial-gradient(ellipse at top left, rgba(46,204,113,0.05), transparent 50%),
+      radial-gradient(ellipse at top right, rgba(52,152,219,0.05), transparent 50%),
       radial-gradient(ellipse at bottom, rgba(201,169,97,0.04), transparent 60%),
       var(--bg);
   }
@@ -154,10 +155,10 @@
     font-variant-numeric: tabular-nums;
   }
   .bloc-side.blue .bloc-server-tag {
-    background: rgba(74,144,226,0.15); color: var(--blue); border: 1px solid var(--blue-dim);
+    background: rgba(46,204,113,0.15); color: var(--blue); border: 1px solid var(--blue-dim);
   }
   .bloc-side.red .bloc-server-tag {
-    background: rgba(231,76,60,0.15); color: var(--red); border: 1px solid var(--red-dim);
+    background: rgba(52,152,219,0.15); color: var(--red); border: 1px solid var(--red-dim);
   }
   .bloc-power {
     font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums;
@@ -174,8 +175,8 @@
     font-size: 14px; font-weight: 700; margin-top: 4px; letter-spacing: 1px;
     padding: 4px 10px; border-radius: 3px;
   }
-  .vs-ratio.blue { color: var(--blue); background: rgba(74,144,226,0.12); }
-  .vs-ratio.red { color: var(--red); background: rgba(231,76,60,0.12); }
+  .vs-ratio.blue { color: var(--blue); background: rgba(46,204,113,0.12); }
+  .vs-ratio.red { color: var(--red); background: rgba(52,152,219,0.12); }
   .vs-ratio.tie { color: var(--accent); background: rgba(201,169,97,0.12); }
 
   @media (max-width: 900px) {
@@ -250,10 +251,10 @@
   }
   td { border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
   tr:hover td { background: rgba(201,169,97,0.04); }
-  tr.blue-row { background: rgba(74,144,226,0.04); }
-  tr.red-row { background: rgba(231,76,60,0.04); }
-  tr.blue-row:hover td { background: rgba(74,144,226,0.10); }
-  tr.red-row:hover td { background: rgba(231,76,60,0.10); }
+  tr.blue-row { background: rgba(46,204,113,0.04); }
+  tr.red-row { background: rgba(52,152,219,0.04); }
+  tr.blue-row:hover td { background: rgba(46,204,113,0.10); }
+  tr.red-row:hover td { background: rgba(52,152,219,0.10); }
   .right { text-align: right; }
   .center { text-align: center; }
   .medal-1 { background: linear-gradient(90deg, rgba(212,175,55,0.22), transparent) !important; }
@@ -271,8 +272,8 @@
     display: inline-block; padding: 2px 8px; border-radius: 3px;
     background: var(--bg-panel-3); font-size: 11px; font-weight: 600; color: var(--accent);
   }
-  .server-tag.blue { background: rgba(74,144,226,0.18); color: var(--blue); }
-  .server-tag.red { background: rgba(231,76,60,0.18); color: var(--red); }
+  .server-tag.blue { background: rgba(46,204,113,0.18); color: var(--blue); }
+  .server-tag.red { background: rgba(52,152,219,0.18); color: var(--red); }
   .bloc-chip {
     display: inline-block; padding: 1px 7px; border-radius: 2px; font-size: 9px;
     font-weight: 700; letter-spacing: 1px; vertical-align: middle;
@@ -424,10 +425,10 @@
   .matchup-cell .diff {
     font-size: 11px; color: var(--text-dim); margin-top: 2px;
   }
-  .matchup-cell.win-blue { background: linear-gradient(135deg, rgba(74,144,226,0.25), rgba(74,144,226,0.08)); }
-  .matchup-cell.win-blue-strong { background: linear-gradient(135deg, rgba(74,144,226,0.45), rgba(74,144,226,0.15)); }
-  .matchup-cell.win-red { background: linear-gradient(135deg, rgba(231,76,60,0.25), rgba(231,76,60,0.08)); }
-  .matchup-cell.win-red-strong { background: linear-gradient(135deg, rgba(231,76,60,0.45), rgba(231,76,60,0.15)); }
+  .matchup-cell.win-blue { background: linear-gradient(135deg, rgba(46,204,113,0.25), rgba(46,204,113,0.08)); }
+  .matchup-cell.win-blue-strong { background: linear-gradient(135deg, rgba(46,204,113,0.45), rgba(46,204,113,0.15)); }
+  .matchup-cell.win-red { background: linear-gradient(135deg, rgba(52,152,219,0.25), rgba(52,152,219,0.08)); }
+  .matchup-cell.win-red-strong { background: linear-gradient(135deg, rgba(52,152,219,0.45), rgba(52,152,219,0.15)); }
   .matchup-cell.close { background: linear-gradient(135deg, rgba(201,169,97,0.18), rgba(201,169,97,0.05)); }
   .matchup-cell .win-tag {
     position: absolute; top: 4px; right: 6px; font-size: 9px;
@@ -469,7 +470,7 @@
   }
   .troop-btn:hover { border-color: var(--accent-dim); color: var(--text); }
   .troop-btn.active { color: var(--text); }
-  .troop-btn.active[data-type="tank"] { border-color: var(--tank); background: rgba(74,144,226,0.15); }
+  .troop-btn.active[data-type="tank"] { border-color: var(--tank); background: rgba(112,128,144,0.20); }
   .troop-btn.active[data-type="missile"] { border-color: var(--missile); background: rgba(230,126,34,0.15); }
   .troop-btn.active[data-type="aircraft"] { border-color: var(--aircraft); background: rgba(155,89,182,0.15); }
 
@@ -492,6 +493,24 @@
   }
   .btn-secondary:hover { background: rgba(201,169,97,0.1); }
 
+  .export-bar {
+    display: flex; gap: 8px; align-items: center; justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  .btn-export {
+    background: var(--bg-panel-2); color: var(--accent);
+    border: 1px solid var(--border); padding: 6px 12px; border-radius: 3px;
+    font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer;
+    letter-spacing: 0.5px; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-export:hover {
+    background: var(--accent); color: var(--bg); border-color: var(--accent);
+  }
+  .btn-export svg {
+    width: 12px; height: 12px;
+  }
+
   .result-box {
     margin-top: 24px; padding: 24px; background: var(--bg-panel);
     border: 1px solid var(--border); border-radius: 4px;
@@ -501,8 +520,8 @@
     font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 20px;
     padding: 14px; border-radius: 4px; letter-spacing: 1px;
   }
-  .result-winner.blue { background: rgba(74,144,226,0.15); color: var(--blue); border: 1px solid var(--blue); }
-  .result-winner.red { background: rgba(231,76,60,0.15); color: var(--red); border: 1px solid var(--red); }
+  .result-winner.blue { background: rgba(46,204,113,0.15); color: var(--blue); border: 1px solid var(--blue); }
+  .result-winner.red { background: rgba(52,152,219,0.15); color: var(--red); border: 1px solid var(--red); }
   .result-winner.draw { background: rgba(201,169,97,0.15); color: var(--accent); border: 1px solid var(--accent); }
 
   .power-bar {
@@ -532,9 +551,9 @@
     border-left: 3px solid var(--accent); margin: 10px 0; font-size: 13px;
     line-height: 1.7; border-radius: 0 3px 3px 0;
   }
-  .insight.blue { background: rgba(74,144,226,0.08); border-left-color: var(--blue); }
-  .insight.red { background: rgba(231,76,60,0.08); border-left-color: var(--red); }
-  .insight.warning { background: rgba(231,76,60,0.1); border-left-color: var(--red); }
+  .insight.blue { background: rgba(46,204,113,0.08); border-left-color: var(--blue); }
+  .insight.red { background: rgba(52,152,219,0.08); border-left-color: var(--red); }
+  .insight.warning { background: rgba(52,152,219,0.1); border-left-color: var(--red); }
   .insight strong { color: var(--accent); }
   .insight.blue strong { color: var(--blue); }
   .insight.red strong { color: var(--red); }
@@ -554,12 +573,12 @@
     font-size: 18px; font-weight: 900; text-align: center; padding: 12px 0;
     border-radius: 3px; letter-spacing: 2px;
   }
-  .tier-label.S { background: #E74C3C; color: white; }
+  .tier-label.S { background: #C9A961; color: #1A1A1A; }
   .tier-label.A { background: #E67E22; color: white; }
   .tier-label.B { background: #F39C12; color: white; }
-  .tier-label.C { background: #2ECC71; color: white; }
-  .tier-label.D { background: #3498DB; color: white; }
-  .tier-label.F { background: #7F8C8D; color: white; }
+  .tier-label.C { background: #95A5A6; color: white; }
+  .tier-label.D { background: #7F8C8D; color: white; }
+  .tier-label.F { background: #4A4A4A; color: white; }
   .tier-members {
     display: flex; flex-wrap: wrap; gap: 6px; padding: 8px;
     background: var(--bg-panel-2); border-radius: 3px; min-height: 48px;
@@ -610,10 +629,10 @@
     SEASON 6 · 陣営対抗戦 分析
     <span class="title-badge">4v4 COALITION WAR</span>
   </div>
-  <div class="subtitle">Last War Survival  ／  BLUE (自陣営) vs RED (敵陣営)  ／  Intelligence Dashboard</div>
+  <div class="subtitle">Last War Survival  ／  密林氏族 (自陣営) vs 湿地氏族 (敵陣営)  ／  Intelligence Dashboard</div>
   <div class="meta-bar">
-    <div class="meta-chip blue-chip"><strong>BLUE</strong>  #324 · #311 · #412 · #332</div>
-    <div class="meta-chip red-chip"><strong>RED</strong>  #307 · #296 · #335 · #304</div>
+    <div class="meta-chip blue-chip"><strong>密林氏族</strong>  #324 · #311 · #412 · #332</div>
+    <div class="meta-chip red-chip"><strong>湿地氏族</strong>  #307 · #296 · #335 · #304</div>
     <div class="meta-chip"><strong>80</strong> 連盟</div>
     <div class="meta-chip"><strong>1,600</strong> 指揮官</div>
   </div>
@@ -623,13 +642,13 @@
   <button class="tab bloc-tab active" data-tab="bloc">陣営概要</button>
   <button class="tab bloc-tab" data-tab="bloc-deep">陣営深掘り</button>
   <button class="tab bloc-tab" data-tab="matchup">サーバーマッチアップ</button>
-  <button class="tab bloc-tab" data-tab="alliance-war">連盟戦闘 (都市/拠点)</button>
   <button class="tab bloc-tab" data-tab="alliance-deep">連盟メンバー分析</button>
-  <button class="tab bloc-tab" data-tab="squad-sim">軍団編成シミュレーター</button>
-  <button class="tab bloc-tab" data-tab="s6-sim">S6 統合シミュレーター</button>
   <button class="tab" data-tab="servers">サーバー分析</button>
   <button class="tab" data-tab="alliances">連盟分析</button>
   <button class="tab" data-tab="commanders">指揮官分析</button>
+  <button class="tab bloc-tab" data-tab="alliance-war">連盟戦闘 (都市/拠点)</button>
+  <button class="tab bloc-tab" data-tab="squad-sim">軍団編成シミュレーター</button>
+  <button class="tab bloc-tab" data-tab="s6-sim">S6 統合シミュレーター</button>
   <button class="tab" data-tab="simulator">戦闘シミュレーション</button>
 </div>
 
@@ -637,8 +656,8 @@
 <div class="tab-content active" id="tab-bloc">
   <div class="bloc-hero">
     <div class="bloc-side blue">
-      <div class="bloc-label">BLUE COALITION</div>
-      <div class="bloc-name">自陣営</div>
+      <div class="bloc-label">JUNGLE CLAN</div>
+      <div class="bloc-name">密林氏族 (自陣営)</div>
       <div class="bloc-servers" id="blue-servers"></div>
       <div class="bloc-power" id="blue-total-power">—</div>
       <div class="bloc-sub">Top10連盟 × 4鯖 = 40連盟合計戦力</div>
@@ -648,8 +667,8 @@
       <div class="vs-ratio" id="ratio-badge">—</div>
     </div>
     <div class="bloc-side red">
-      <div class="bloc-label">RED COALITION</div>
-      <div class="bloc-name">敵陣営</div>
+      <div class="bloc-label">WETLAND CLAN</div>
+      <div class="bloc-name">湿地氏族 (敵陣営)</div>
       <div class="bloc-servers" id="red-servers"></div>
       <div class="bloc-power" id="red-total-power">—</div>
       <div class="bloc-sub">Top10連盟 × 4鯖 = 40連盟合計戦力</div>
@@ -703,6 +722,11 @@
     <div style="font-size:12px; color:var(--text-dim); margin-bottom:14px;">
       各サーバーの指揮官Top200を戦力帯で分類。セルの色が濃いほど該当戦力帯の人数が多い(陣営色で彩色)。横方向に戦力帯の厚みの違い、縦方向にサーバー同士の比較が見える。
     </div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportServerSegment('csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportServerSegment('xlsx')">📊 Excel</button>
+    </div>
     <div style="overflow-x: auto;">
       <div id="server-segment-heatmap"></div>
     </div>
@@ -724,7 +748,7 @@
 
   <div class="grid-2">
     <div class="panel">
-      <div class="panel-title"><span class="num">5</span>BLUE陣営 Top20指揮官</div>
+      <div class="panel-title"><span class="num">5</span>密林氏族 Top20指揮官</div>
       <div class="table-scroll" style="max-height:520px;">
         <table id="blue-top20-table">
           <thead><tr><th>陣営順</th><th>全体順</th><th>鯖</th><th>指揮官</th><th class="right">戦力(M)</th></tr></thead>
@@ -733,7 +757,7 @@
       </div>
     </div>
     <div class="panel">
-      <div class="panel-title"><span class="num">6</span>RED陣営 Top20指揮官</div>
+      <div class="panel-title"><span class="num">6</span>湿地氏族 Top20指揮官</div>
       <div class="table-scroll" style="max-height:520px;">
         <table id="red-top20-table">
           <thead><tr><th>陣営順</th><th>全体順</th><th>鯖</th><th>指揮官</th><th class="right">戦力(M)</th></tr></thead>
@@ -790,6 +814,11 @@
     <div style="font-size:12px; color:var(--text-dim); margin-bottom:14px;">
       各連盟が指揮官Top200にどれだけ送り込んでいるか = <strong>連盟あたりの精鋭密度</strong>。連盟内部の動員力を測る指標。
     </div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportTableToCSV('elite-density-table','精鋭密度ランキング.csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportTableToXLSX('elite-density-table','精鋭密度ランキング.xlsx','精鋭密度')">📊 Excel</button>
+    </div>
     <div class="table-scroll" style="max-height: 480px;">
       <table id="elite-density-table">
         <thead>
@@ -820,7 +849,7 @@
   <div class="panel">
     <div class="panel-title"><span class="num">1</span>4×4 マッチアップマトリクス<span class="tag">Top10連盟戦力比較</span></div>
     <div style="font-size:12px; color:var(--text-dim); margin-bottom:12px;">
-      各セルは <strong style="color:var(--blue)">BLUE鯖</strong> 対 <strong style="color:var(--red)">RED鯖</strong> の Top10連盟戦力比。1.00倍超はBLUE優位、0.90倍未満はRED優位。
+      各セルは <strong style="color:var(--blue)">密林鯖</strong> 対 <strong style="color:var(--red)">湿地鯖</strong> の Top10連盟戦力比。1.00倍超は密林氏族優位、0.90倍未満は湿地氏族優位。
     </div>
     <div id="matchup-matrix"></div>
   </div>
@@ -828,14 +857,14 @@
   <div class="panel">
     <div class="panel-title"><span class="num">2</span>個別マッチアップ詳細</div>
     <div class="filter-bar">
-      <span class="filter-label">BLUE鯖:</span>
+      <span class="filter-label">密林鯖:</span>
       <select id="matchup-blue">
         <option value="#324">#324</option>
         <option value="#311">#311</option>
         <option value="#412">#412</option>
         <option value="#332">#332</option>
       </select>
-      <span class="filter-label">RED鯖:</span>
+      <span class="filter-label">湿地鯖:</span>
       <select id="matchup-red">
         <option value="#307">#307</option>
         <option value="#296">#296</option>
@@ -849,7 +878,7 @@
   <div class="panel">
     <div class="panel-title"><span class="num">3</span>シナリオ推奨 (最適組み合わせ探索)</div>
     <div style="font-size:12px; color:var(--text-dim); margin-bottom:12px;">
-      4×4 マッチアップの全16通り組み合わせから、BLUE陣営の合計勝利数を最大化する割当を計算(ハンガリアン法による完全割当)。
+      4×4 マッチアップの全16通り組み合わせから、密林氏族の合計勝利数を最大化する割当を計算(ハンガリアン法による完全割当)。
     </div>
     <div id="optimal-matching"></div>
   </div>
@@ -899,11 +928,11 @@
         <thead>
           <tr>
             <th class="center">戦力順</th>
-            <th style="background: var(--blue-dim); color: white;">BLUE 連盟</th>
+            <th style="background: var(--blue-dim); color: white;">密林氏族 連盟</th>
             <th class="right" style="background: var(--blue-dim); color: white;">戦力 (B)</th>
             <th class="center" style="background: var(--accent); color: var(--bg);">比較</th>
             <th class="right" style="background: var(--red-dim); color: white;">戦力 (B)</th>
-            <th style="background: var(--red-dim); color: white;">RED 連盟</th>
+            <th style="background: var(--red-dim); color: white;">湿地氏族 連盟</th>
             <th class="center">予測</th>
           </tr>
         </thead>
@@ -919,7 +948,7 @@
     </div>
     <div class="grid-2">
       <div>
-        <h4 style="color: var(--blue); font-size: 13px; margin-bottom: 12px; letter-spacing: 1px;">▸ BLUE 陣営 最強2v2ペア TOP10</h4>
+        <h4 style="color: var(--blue); font-size: 13px; margin-bottom: 12px; letter-spacing: 1px;">▸ 密林氏族 最強2v2ペア TOP10</h4>
         <div class="table-scroll" style="max-height: 420px;">
           <table id="blue-pairs-table">
             <thead>
@@ -935,7 +964,7 @@
         </div>
       </div>
       <div>
-        <h4 style="color: var(--red); font-size: 13px; margin-bottom: 12px; letter-spacing: 1px;">▸ RED 陣営 最強2v2ペア TOP10</h4>
+        <h4 style="color: var(--red); font-size: 13px; margin-bottom: 12px; letter-spacing: 1px;">▸ 湿地氏族 最強2v2ペア TOP10</h4>
         <div class="table-scroll" style="max-height: 420px;">
           <table id="red-pairs-table">
             <thead>
@@ -983,9 +1012,9 @@
     </div>
 
     <div class="sim-grid" id="war-sim-grid">
-      <!-- BLUE side -->
+      <!-- 密林氏族 side -->
       <div class="side blue-side">
-        <h3>BLUE (攻撃側)</h3>
+        <h3>密林氏族 (攻撃側)</h3>
         <div id="war-blue-selector"></div>
         <label>主力兵種</label>
         <div class="troop-grid">
@@ -1007,9 +1036,9 @@
 
       <div class="vs-divider">VS</div>
 
-      <!-- RED side -->
+      <!-- 湿地氏族 side -->
       <div class="side red-side">
-        <h3>RED (守備側)</h3>
+        <h3>湿地氏族 (守備側)</h3>
         <div id="war-red-selector"></div>
         <label>主力兵種</label>
         <div class="troop-grid">
@@ -1080,8 +1109,8 @@
       <span class="filter-label">陣営:</span>
       <div class="chip-filter">
         <button class="chip-btn active" data-ad-bloc="all">ALL</button>
-        <button class="chip-btn blue" data-ad-bloc="blue">BLUE</button>
-        <button class="chip-btn red" data-ad-bloc="red">RED</button>
+        <button class="chip-btn blue" data-ad-bloc="blue">密林</button>
+        <button class="chip-btn red" data-ad-bloc="red">湿地</button>
       </div>
       <span class="filter-label">連盟:</span>
       <select id="ad-alliance-select"></select>
@@ -1102,6 +1131,11 @@
         <button class="chip-btn" data-density-range="200">Top 200</button>
         <button class="chip-btn" data-density-range="500">Top 500</button>
       </div>
+    </div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportTableToCSV('alliance-density-table','連盟精鋭密度ランキング.csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportTableToXLSX('alliance-density-table','連盟精鋭密度ランキング.xlsx','連盟精鋭密度')">📊 Excel</button>
     </div>
     <div class="table-scroll" style="max-height: 560px;">
       <table id="alliance-density-table">
@@ -1195,24 +1229,24 @@
     </div>
 
     <div class="filter-bar">
-      <span class="filter-label">BLUE 選択:</span>
+      <span class="filter-label">密林氏族 選択:</span>
       <select id="squad-blue-source">
         <option value="commander">指揮官リストから</option>
         <option value="custom">カスタム戦力</option>
       </select>
-      <span class="filter-label">BLUE 課金:</span>
+      <span class="filter-label">密林氏族 課金:</span>
       <div class="chip-filter">
         <button class="chip-btn active" data-squad-side="blue" data-squad-vip="f2p">無課金 (3軍)</button>
         <button class="chip-btn" data-squad-side="blue" data-squad-vip="p2w">課金 (4軍)</button>
       </div>
     </div>
     <div class="filter-bar">
-      <span class="filter-label">RED 選択:</span>
+      <span class="filter-label">湿地氏族 選択:</span>
       <select id="squad-red-source">
         <option value="commander">指揮官リストから</option>
         <option value="custom">カスタム戦力</option>
       </select>
-      <span class="filter-label">RED 課金:</span>
+      <span class="filter-label">湿地氏族 課金:</span>
       <div class="chip-filter">
         <button class="chip-btn active" data-squad-side="red" data-squad-vip="f2p">無課金 (3軍)</button>
         <button class="chip-btn" data-squad-side="red" data-squad-vip="p2w">課金 (4軍)</button>
@@ -1221,7 +1255,7 @@
 
     <div class="sim-grid" style="margin-top: 16px;">
       <div class="side blue-side">
-        <h3>BLUE 指揮官</h3>
+        <h3>密林氏族 指揮官</h3>
         <div id="squad-blue-selector"></div>
         <div id="squad-blue-squads" style="margin-top: 14px;"></div>
       </div>
@@ -1229,7 +1263,7 @@
       <div class="vs-divider">VS</div>
 
       <div class="side red-side">
-        <h3>RED 指揮官</h3>
+        <h3>湿地氏族 指揮官</h3>
         <div id="squad-red-selector"></div>
         <div id="squad-red-squads" style="margin-top: 14px;"></div>
       </div>
@@ -1284,7 +1318,7 @@
       <div>
         <div class="insight blue">
           <strong>① 陣営構造 (4v4)</strong><br>
-          BLUE陣営 (#324 #311 #412 #332) vs RED陣営 (#307 #296 #335 #304)。各陣営4鯖がDeepwood / Wetlandのいずれかとして連携。陣営内のAlliance Pact(同盟協定)でさらに2連盟が密接連携可能。
+          密林氏族 (#324 #311 #412 #332) vs 湿地氏族 (#307 #296 #335 #304)。各陣営4鯖がDeepwood / Wetlandのいずれかとして連携。陣営内のAlliance Pact(同盟協定)でさらに2連盟が密接連携可能。
         </div>
         <div class="insight">
           <strong>② Faction Tech (陣営技術)</strong><br>
@@ -1331,9 +1365,9 @@
     </div>
 
     <div class="grid-2">
-      <!-- BLUE Modifiers -->
+      <!-- 密林氏族 Modifiers -->
       <div class="side blue-side">
-        <h3>BLUE 陣営 buff</h3>
+        <h3>密林氏族 buff</h3>
 
         <label>Faction Tech Tier (陣営技術)</label>
         <select id="s6-blue-tech">
@@ -1385,9 +1419,9 @@
         </div>
       </div>
 
-      <!-- RED Modifiers -->
+      <!-- 湿地氏族 Modifiers -->
       <div class="side red-side">
-        <h3>RED 陣営 buff</h3>
+        <h3>湿地氏族 buff</h3>
 
         <label>Faction Tech Tier (陣営技術)</label>
         <select id="s6-red-tech">
@@ -1476,14 +1510,14 @@
         <div>
           <label style="font-size: 11px; color: var(--text-dim);">主力兵種マッチアップ</label>
           <div style="display: flex; gap: 8px; align-items: center; font-size: 12px;">
-            <span style="color: var(--blue);">BLUE:</span>
+            <span style="color: var(--blue);">密林:</span>
             <select id="s6-blue-troop" style="flex:1;">
               <option value="tank" selected>🛡 TANK</option>
               <option value="missile">🚀 MISSILE</option>
               <option value="aircraft">✈ AIRCRAFT</option>
             </select>
             <span style="color: var(--accent);">vs</span>
-            <span style="color: var(--red);">RED:</span>
+            <span style="color: var(--red);">湿地:</span>
             <select id="s6-red-troop" style="flex:1;">
               <option value="tank">🛡 TANK</option>
               <option value="missile" selected>🚀 MISSILE</option>
@@ -1547,6 +1581,11 @@
 <div class="tab-content" id="tab-servers">
   <div class="panel">
     <div class="panel-title"><span class="num">1</span>サーバー総合ランキング</div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportTableToCSV('server-table','サーバー総合ランキング.csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportTableToXLSX('server-table','サーバー総合ランキング.xlsx','サーバー')">📊 Excel</button>
+    </div>
     <div class="table-scroll">
       <table id="server-table">
         <thead>
@@ -1585,8 +1624,8 @@
       <span class="filter-label">陣営:</span>
       <div class="chip-filter">
         <button class="chip-btn active" data-bloc="all">ALL</button>
-        <button class="chip-btn blue" data-bloc="blue">BLUE</button>
-        <button class="chip-btn red" data-bloc="red">RED</button>
+        <button class="chip-btn blue" data-bloc="blue">密林</button>
+        <button class="chip-btn red" data-bloc="red">湿地</button>
       </div>
       <span class="filter-label">サーバー:</span>
       <select id="alliance-server-filter"><option value="">全サーバー</option></select>
@@ -1598,6 +1637,11 @@
         <option value="50" selected>Top 50</option>
         <option value="80">全80</option>
       </select>
+    </div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportTableToCSV('alliance-table','連盟ランキング.csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportTableToXLSX('alliance-table','連盟ランキング.xlsx','連盟')">📊 Excel</button>
     </div>
     <div class="table-scroll">
       <table id="alliance-table">
@@ -1612,6 +1656,42 @@
       </table>
     </div>
   </div>
+
+  <div class="panel">
+    <div class="panel-title"><span class="num">2</span>連盟別 戦力帯セグメント<span class="tag">指揮官 Top200 × 連盟別</span></div>
+    <div style="font-size:12px; color:var(--text-dim); margin-bottom:14px;">
+      指揮官ランキングTop200に該当連盟メンバーがいる連盟を、戦力帯ごとに分類。各連盟の<strong>戦力構造の厚み</strong>(高戦力に偏るか中堅層が多いか)が一目で分かる。Top200に出現しない低戦力メンバーは含まないため、連盟の<strong>「見えている精鋭層」の分布</strong>を比較できる。
+    </div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportAllianceSegment('csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportAllianceSegment('xlsx')">📊 Excel</button>
+    </div>
+    <div style="overflow-x: auto;">
+      <div id="alliance-segment-heatmap"></div>
+    </div>
+    <div style="margin-top:16px;">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:11px; color:var(--text-dim);">
+        <span style="letter-spacing:1px;">表示形式:</span>
+        <div class="chip-filter">
+          <button class="chip-btn active" data-aseg-view="count">人数</button>
+          <button class="chip-btn" data-aseg-view="percent">構成比%</button>
+        </div>
+        <span style="letter-spacing:1px; margin-left: 16px;">並び順:</span>
+        <div class="chip-filter">
+          <button class="chip-btn active" data-aseg-sort="bloc">陣営別</button>
+          <button class="chip-btn" data-aseg-sort="power">連盟戦力順</button>
+          <button class="chip-btn" data-aseg-sort="elite">Top200人数順</button>
+        </div>
+        <span style="letter-spacing:1px; margin-left: 16px;">表示数:</span>
+        <div class="chip-filter">
+          <button class="chip-btn" data-aseg-limit="15">Top 15</button>
+          <button class="chip-btn active" data-aseg-limit="25">Top 25</button>
+          <button class="chip-btn" data-aseg-limit="40">Top 40</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ========== TAB: COMMANDERS ========== -->
@@ -1622,8 +1702,8 @@
       <span class="filter-label">陣営:</span>
       <div class="chip-filter">
         <button class="chip-btn active" data-bloc="all">ALL</button>
-        <button class="chip-btn blue" data-bloc="blue">BLUE</button>
-        <button class="chip-btn red" data-bloc="red">RED</button>
+        <button class="chip-btn blue" data-bloc="blue">密林</button>
+        <button class="chip-btn red" data-bloc="red">湿地</button>
       </div>
       <span class="filter-label">鯖:</span>
       <select id="cmd-server-filter"><option value="">全サーバー</option></select>
@@ -1637,6 +1717,11 @@
         <option value="200" selected>Top 200</option>
         <option value="1600">全1,600名</option>
       </select>
+    </div>
+    <div class="export-bar">
+      <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">エクスポート</span>
+      <button class="btn-export" onclick="exportTableToCSV('cmd-table','指揮官ランキング.csv')">📄 CSV</button>
+      <button class="btn-export" onclick="exportTableToXLSX('cmd-table','指揮官ランキング.xlsx','指揮官')">📊 Excel</button>
     </div>
     <div class="table-scroll" style="max-height:620px;">
       <table id="cmd-table">
@@ -1679,7 +1764,7 @@
 
     <div class="sim-grid">
       <div class="side blue-side">
-        <h3>BLUE 勢力</h3>
+        <h3>密林氏族 勢力</h3>
         <div id="blue-selector"></div>
         <label>主力兵種</label>
         <div class="troop-grid">
@@ -1702,7 +1787,7 @@
       <div class="vs-divider">VS</div>
 
       <div class="side red-side">
-        <h3>RED 勢力</h3>
+        <h3>湿地氏族 勢力</h3>
         <div id="red-selector"></div>
         <label>主力兵種</label>
         <div class="troop-grid">
@@ -1752,7 +1837,7 @@
 
 <footer>
   Last War Survival Season 6  ／  4v4 Coalition War Intelligence Dashboard<br>
-  BLUE: #324 · #311 · #412 · #332   ／   RED: #307 · #296 · #335 · #304<br>
+  密林氏族: #324 · #311 · #412 · #332   ／   湿地氏族: #307 · #296 · #335 · #304<br>
   単位: B = 10億 (Billion), M = 100万 (Million)   ／   戦闘モデルは公開ゲームメカニクス情報に基づく推定
 </footer>
 
@@ -1766,10 +1851,147 @@ const BLUE_SERVERS = ['#324', '#311', '#412', '#332'];
 const RED_SERVERS = ['#307', '#296', '#335', '#304'];
 const ALL_SERVERS = [...BLUE_SERVERS, ...RED_SERVERS];
 
+// ========== EXPORT UTILITIES ==========
+// HTML テーブル → CSV ダウンロード
+function exportTableToCSV(tableId, filename) {
+  const table = document.getElementById(tableId);
+  if (!table) { alert('テーブルが見つかりません: ' + tableId); return; }
+  const rows = table.querySelectorAll('tr');
+  const csvRows = [];
+  rows.forEach(tr => {
+    const cells = tr.querySelectorAll('th, td');
+    const row = [];
+    cells.forEach(cell => {
+      // テキストのみ抽出 (HTMLタグや改行を除去)
+      let text = cell.textContent.trim().replace(/\s+/g, ' ');
+      // ダブルクォートをエスケープ
+      if (text.includes(',') || text.includes('"') || text.includes('\n')) {
+        text = '"' + text.replace(/"/g, '""') + '"';
+      }
+      row.push(text);
+    });
+    if (row.length > 0) csvRows.push(row.join(','));
+  });
+  // BOM付きUTF-8で保存(Excel対応)
+  const csv = '\uFEFF' + csvRows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// HTML テーブル → Excel (xlsx) ダウンロード
+function exportTableToXLSX(tableId, filename, sheetName) {
+  const table = document.getElementById(tableId);
+  if (!table) { alert('テーブルが見つかりません: ' + tableId); return; }
+  const wb = XLSX.utils.table_to_book(table, { sheet: sheetName || 'Sheet1' });
+  XLSX.writeFile(wb, filename);
+}
+
+// セグメントヒートマップ用: 2D配列 → Excel
+function exportSegmentToXLSX(rows, filename, sheetName) {
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  // 列幅を自動調整 (最大文字数ベース)
+  const colWidths = rows[0].map((_, colIdx) => {
+    const maxLen = Math.max(...rows.map(r => String(r[colIdx] || '').length));
+    return { wch: Math.min(Math.max(maxLen + 2, 8), 40) };
+  });
+  ws['!cols'] = colWidths;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName || 'Sheet1');
+  XLSX.writeFile(wb, filename);
+}
+
+// 共通エクスポートボタンHTML生成
+function exportButtonsHTML(label, csvFn, xlsxFn) {
+  return `<div class="export-bar">
+    <span style="font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-right:4px;">${label}</span>
+    <button class="btn-export" onclick="${csvFn}">📄 CSV</button>
+    <button class="btn-export" onclick="${xlsxFn}">📊 Excel</button>
+  </div>`;
+}
+
+// セグメントヒートマップ用: グリッドデータから2D配列を構築
+function buildSegmentRows(grid, segDefs, labelHeader, view, getLabel, getServer) {
+  const header = [labelHeader];
+  segDefs.forEach(([label]) => header.push(label));
+  header.push('合計');
+  const rows = [header];
+  grid.forEach(g => {
+    const label = getLabel(g);
+    const total = g.total || g.counts.reduce((a,b) => a+b, 0);
+    const row = [label];
+    g.counts.forEach(cnt => {
+      if (view === 'percent') {
+        const pct = total > 0 ? (cnt / total * 100) : 0;
+        row.push(pct.toFixed(1) + '%');
+      } else {
+        row.push(cnt);
+      }
+    });
+    row.push(total);
+    rows.push(row);
+  });
+  // 合計行
+  const colTotals = segDefs.map((_, i) => grid.reduce((s, g) => s + g.counts[i], 0));
+  const grand = colTotals.reduce((a,b) => a+b, 0);
+  const totalRow = ['合計'];
+  colTotals.forEach(t => {
+    if (view === 'percent') {
+      const pct = grand > 0 ? (t / grand * 100) : 0;
+      totalRow.push(pct.toFixed(1) + '%');
+    } else {
+      totalRow.push(t);
+    }
+  });
+  totalRow.push(grand);
+  rows.push(totalRow);
+  return rows;
+}
+
+function exportServerSegment(format) {
+  const data = window._serverSegmentExportData;
+  if (!data) { alert('セグメントデータが見つかりません。タブを再表示してください。'); return; }
+  const view = (typeof segmentState !== 'undefined' && segmentState.view) || 'count';
+  const rows = buildSegmentRows(data.grid, data.segDefs, 'サーバー', view, g => g.server);
+  const filename = `サーバー別戦力帯セグメント_${view === 'count' ? '人数' : '構成比'}.${format}`;
+  if (format === 'csv') downloadCSV(rows, filename);
+  else exportSegmentToXLSX(rows, filename, 'サーバー別セグメント');
+}
+
+function exportAllianceSegment(format) {
+  const data = window._allianceSegmentExportData;
+  if (!data) { alert('セグメントデータが見つかりません。タブを再表示してください。'); return; }
+  const view = (typeof allianceSegmentState !== 'undefined' && allianceSegmentState.view) || 'count';
+  const rows = buildSegmentRows(data.rows, data.segDefs, '連盟 (鯖)', view, g => `${g.ally.alliance} (${g.ally.server})`);
+  const filename = `連盟別戦力帯セグメント_${view === 'count' ? '人数' : '構成比'}.${format}`;
+  if (format === 'csv') downloadCSV(rows, filename);
+  else exportSegmentToXLSX(rows, filename, '連盟別セグメント');
+}
+
+function downloadCSV(rows, filename) {
+  const csv = '\uFEFF' + rows.map(r => r.map(c => {
+    const s = String(c);
+    return (s.includes(',') || s.includes('"') || s.includes('\n')) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
 const COLORS = {
   servers: {
-    '#311': '#3498DB', '#324': '#5DADE2', '#412': '#2874A6', '#332': '#6DC6E2',
-    '#307': '#E74C3C', '#296': '#EC7063', '#335': '#B03A2E', '#304': '#F1948A',
+    // 密林氏族 (緑系グラデーション)
+    '#311': '#27AE60', '#324': '#2ECC71', '#412': '#16A085', '#332': '#52BE80',
+    // 湿地氏族 (青系グラデーション)
+    '#307': '#2980B9', '#296': '#3498DB', '#335': '#1F618D', '#304': '#5DADE2',
   }
 };
 function bloc(srv) { return BLUE_SERVERS.includes(srv) ? 'blue' : 'red'; }
@@ -1861,10 +2083,10 @@ function renderBlocOverview() {
     badge.textContent = `拮抗 ${ratio.toFixed(3)}倍`;
   } else if (diff > 0) {
     badge.className = 'vs-ratio blue';
-    badge.textContent = `BLUE +${diff.toFixed(1)}%`;
+    badge.textContent = `密林氏族 +${diff.toFixed(1)}%`;
   } else {
     badge.className = 'vs-ratio red';
-    badge.textContent = `RED +${(-diff).toFixed(1)}%`;
+    badge.textContent = `湿地氏族 +${(-diff).toFixed(1)}%`;
   }
 
   // VS bars - 主要指標
@@ -1939,12 +2161,12 @@ function renderBlocOverview() {
       // 比較 (invertCompareの場合は低い方が良い)
       let diffText, diffColor;
       if (m.invertCompare) {
-        if (m.b < m.r) { diffText = `BLUE優 (${((m.r/m.b - 1) * 100).toFixed(1)}%低)`; diffColor = 'var(--blue)'; }
-        else if (m.b > m.r) { diffText = `RED優 (${((m.b/m.r - 1) * 100).toFixed(1)}%低)`; diffColor = 'var(--red)'; }
+        if (m.b < m.r) { diffText = `密林優 (${((m.r/m.b - 1) * 100).toFixed(1)}%低)`; diffColor = 'var(--blue)'; }
+        else if (m.b > m.r) { diffText = `湿地優 (${((m.b/m.r - 1) * 100).toFixed(1)}%低)`; diffColor = 'var(--red)'; }
         else { diffText = '同等'; diffColor = 'var(--text-dim)'; }
       } else {
-        if (m.b > m.r) { diffText = `+${((m.b/m.r - 1) * 100).toFixed(1)}% BLUE`; diffColor = 'var(--blue)'; }
-        else if (m.b < m.r) { diffText = `+${((m.r/m.b - 1) * 100).toFixed(1)}% RED`; diffColor = 'var(--red)'; }
+        if (m.b > m.r) { diffText = `+${((m.b/m.r - 1) * 100).toFixed(1)}% 密林`; diffColor = 'var(--blue)'; }
+        else if (m.b < m.r) { diffText = `+${((m.r/m.b - 1) * 100).toFixed(1)}% 湿地`; diffColor = 'var(--red)'; }
         else { diffText = '拮抗'; diffColor = 'var(--text-dim)'; }
       }
       const hintHtml = m.hint ? `<span style="color:var(--text-dimmer); font-size:10px; margin-left:6px; font-weight:normal;">— ${m.hint}</span>` : '';
@@ -1969,7 +2191,7 @@ function renderBlocOverview() {
   new Chart(ctx1, {
     type: 'bar',
     data: {
-      labels: ['BLUE 陣営', 'RED 陣営'],
+      labels: ['密林氏族', '湿地氏族'],
       datasets: ALL_SERVERS.map(s => ({
         label: s,
         data: [
@@ -2010,13 +2232,13 @@ function renderBlocOverview() {
         {
           label: 'BLUE',
           data: tiers.map(n => topCmds.slice(0, n).filter(c => BLUE_SERVERS.includes(c.server)).length / n * 100),
-          backgroundColor: 'rgba(74,144,226,0.85)',
+          backgroundColor: 'rgba(46,204,113,0.85)',
           borderRadius: 2,
         },
         {
           label: 'RED',
           data: tiers.map(n => topCmds.slice(0, n).filter(c => RED_SERVERS.includes(c.server)).length / n * 100),
-          backgroundColor: 'rgba(231,76,60,0.85)',
+          backgroundColor: 'rgba(52,152,219,0.85)',
           borderRadius: 2,
         }
       ]
@@ -2036,27 +2258,27 @@ function renderBlocOverview() {
 
   // Insights
   const insightsData = [];
-  const rt = ratio > 1 ? 'BLUE' : 'RED';
+  const rt = ratio > 1 ? '密林氏族' : '湿地氏族';
   const rtCls = ratio > 1 ? 'blue' : 'red';
   insightsData.push({
     cls: rtCls,
-    text: `<strong>▸ 全体戦力比</strong> BLUE <strong>${fmt.b(BLUE.top10_total)}</strong> vs RED <strong>${fmt.b(RED.top10_total)}</strong> — <strong>${rt} +${Math.abs(diff).toFixed(1)}%</strong> の優位。10%未満で「優位だが油断禁物」の領域。`
+    text: `<strong>▸ 全体戦力比</strong> 密林氏族 <strong>${fmt.b(BLUE.top10_total)}</strong> vs 湿地氏族 <strong>${fmt.b(RED.top10_total)}</strong> — <strong>${rt} +${Math.abs(diff).toFixed(1)}%</strong> の優位。10%未満で「優位だが油断禁物」の領域。`
   });
-  const top50SideBlue = top50Blue >= 25 ? 'BLUE' : 'RED';
+  const top50SideBlue = top50Blue >= 25 ? '密林氏族' : '湿地氏族';
   const top50Cls = top50Blue >= 25 ? 'blue' : 'red';
   insightsData.push({
     cls: top50Cls,
-    text: `<strong>▸ 頂点層の厚み</strong> 個人Top50に BLUE <strong>${top50Blue}名</strong> / RED <strong>${top50Red}名</strong>。エリート層は<strong>${top50SideBlue}</strong>が厚い。連盟鯖Top10にBLUE${top10AllBlue}連盟・RED${top10AllRed}連盟。`
+    text: `<strong>▸ 頂点層の厚み</strong> 個人Top50に 密林氏族 <strong>${top50Blue}名</strong> / 湿地氏族 <strong>${top50Red}名</strong>。エリート層は<strong>${top50SideBlue}</strong>が厚い。連盟鯖Top10に密林氏族${top10AllBlue}連盟・湿地氏族${top10AllRed}連盟。`
   });
   if (BLUE.cmd_top < RED.cmd_top) {
     insightsData.push({
       cls: 'warning',
-      text: `<strong>▸ 警戒</strong> 個の最大戦力は RED (<strong>${fmt.m(RED.cmd_top)}</strong>, ${RED.top_cmd_name.name}) がBLUE (${fmt.m(BLUE.cmd_top)}) を<strong>${(RED.cmd_top/BLUE.cmd_top*100-100).toFixed(1)}%</strong>上回る。一点突破型の指揮官への対策要。`
+      text: `<strong>▸ 警戒</strong> 個の最大戦力は 湿地氏族 (<strong>${fmt.m(RED.cmd_top)}</strong>, ${RED.top_cmd_name.name}) が密林氏族 (${fmt.m(BLUE.cmd_top)}) を<strong>${(RED.cmd_top/BLUE.cmd_top*100-100).toFixed(1)}%</strong>上回る。一点突破型の指揮官への対策要。`
     });
   } else {
     insightsData.push({
       cls: 'blue',
-      text: `<strong>▸ 最強指揮官</strong> BLUE所属 ${BLUE.top_cmd_name.name} (<strong>${fmt.m(BLUE.cmd_top)}</strong>) が陣営トップ。RED最強 (${fmt.m(RED.cmd_top)}) を上回る。`
+      text: `<strong>▸ 最強指揮官</strong> 密林氏族所属 ${BLUE.top_cmd_name.name} (<strong>${fmt.m(BLUE.cmd_top)}</strong>) が陣営トップ。湿地氏族最強 (${fmt.m(RED.cmd_top)}) を上回る。`
     });
   }
   // サーバー格差
@@ -2066,29 +2288,29 @@ function renderBlocOverview() {
   const redMaxMin = Math.max(...redSrvs.map(s=>s.top10_total)) / Math.min(...redSrvs.map(s=>s.top10_total));
   insightsData.push({
     cls: blueMaxMin < redMaxMin ? 'blue' : 'red',
-    text: `<strong>▸ 陣営内均衡</strong> 鯖間戦力格差は BLUE <strong>${blueMaxMin.toFixed(2)}倍</strong> / RED <strong>${redMaxMin.toFixed(2)}倍</strong>。${blueMaxMin < redMaxMin ? 'BLUE陣営内が均質で連携しやすい' : 'RED陣営内が均質で連携しやすい'}。格差が大きい側は連携リスクあり。`
+    text: `<strong>▸ 陣営内均衡</strong> 鯖間戦力格差は 密林氏族 <strong>${blueMaxMin.toFixed(2)}倍</strong> / 湿地氏族 <strong>${redMaxMin.toFixed(2)}倍</strong>。${blueMaxMin < redMaxMin ? '密林氏族内が均質で連携しやすい' : '湿地氏族内が均質で連携しやすい'}。格差が大きい側は連携リスクあり。`
   });
 
   // 戦力構造分析 (新) — gini関数は上部で定義済み、blueGini/redGiniは既に計算済みを再利用
   const giniDiff = Math.abs(blueGini - redGini);
   if (giniDiff > 0.02) {
-    const adv = blueGini < redGini ? 'BLUE' : 'RED';
-    const advCls = adv === 'BLUE' ? 'blue' : 'red';
+    const adv = blueGini < redGini ? '密林氏族' : '湿地氏族';
+    const advCls = adv === '密林氏族' ? 'blue' : 'red';
     insightsData.push({
       cls: advCls,
-      text: `<strong>▸ 戦力分布の格差</strong> ジニ係数 BLUE <strong>${blueGini.toFixed(3)}</strong> / RED <strong>${redGini.toFixed(3)}</strong>。<strong>${adv}陣営の方が戦力分布が均質</strong>(格差が小さい)。均質な陣営は中堅層の動員力が高く、長期戦に強い。`
+      text: `<strong>▸ 戦力分布の格差</strong> ジニ係数 密林氏族 <strong>${blueGini.toFixed(3)}</strong> / 湿地氏族 <strong>${redGini.toFixed(3)}</strong>。<strong>${adv}の方が戦力分布が均質</strong>(格差が小さい)。均質な陣営は中堅層の動員力が高く、長期戦に強い。`
     });
   }
 
   // 主戦力層 (200M+) の比較
   const blue200 = BLUE.powers.filter(p => p >= 200e6).length;
   const red200 = RED.powers.filter(p => p >= 200e6).length;
-  const main200Side = blue200 > red200 ? 'BLUE' : 'RED';
+  const main200Side = blue200 > red200 ? '密林氏族' : '湿地氏族';
   const main200Diff = Math.abs(blue200 - red200);
   if (main200Diff >= 5) {
     insightsData.push({
-      cls: main200Side === 'BLUE' ? 'blue' : 'red',
-      text: `<strong>▸ 主戦力層 (200M+) の厚み</strong> BLUE <strong>${blue200}名</strong> / RED <strong>${red200}名</strong>。City攻防の主役となる200M+層は<strong>${main200Side}</strong>が${main200Diff}名多い。攻撃側の頭数が決定的な拠点戦で優位。`
+      cls: main200Side === '密林氏族' ? 'blue' : 'red',
+      text: `<strong>▸ 主戦力層 (200M+) の厚み</strong> 密林氏族 <strong>${blue200}名</strong> / 湿地氏族 <strong>${red200}名</strong>。City攻防の主役となる200M+層は<strong>${main200Side}</strong>が${main200Diff}名多い。攻撃側の頭数が決定的な拠点戦で優位。`
     });
   }
 
@@ -2100,10 +2322,10 @@ function renderBlocOverview() {
   const blueTop3Pct = blueAllyTop3 / blueAllyTotal * 100;
   const redTop3Pct = redAllyTop3 / redAllyTotal * 100;
   if (Math.abs(blueTop3Pct - redTop3Pct) > 3) {
-    const concentratedSide = blueTop3Pct > redTop3Pct ? 'BLUE' : 'RED';
+    const concentratedSide = blueTop3Pct > redTop3Pct ? '密林氏族' : '湿地氏族';
     insightsData.push({
       cls: '',
-      text: `<strong>▸ 連盟戦力の集中度</strong> 上位3連盟が陣営戦力に占める割合: BLUE <strong>${blueTop3Pct.toFixed(1)}%</strong> / RED <strong>${redTop3Pct.toFixed(1)}%</strong>。<strong>${concentratedSide}は主力依存型</strong>(エース連盟を潰されると総崩れリスク)。逆側は分散型で堅実。`
+      text: `<strong>▸ 連盟戦力の集中度</strong> 上位3連盟が陣営戦力に占める割合: 密林氏族 <strong>${blueTop3Pct.toFixed(1)}%</strong> / 湿地氏族 <strong>${redTop3Pct.toFixed(1)}%</strong>。<strong>${concentratedSide}は主力依存型</strong>(エース連盟を潰されると総崩れリスク)。逆側は分散型で堅実。`
     });
   }
 
@@ -2114,12 +2336,12 @@ function renderBlocOverview() {
 function renderBlocDeep() {
   // KPI cards
   const kpis = [
-    { cls:'blue', label:'BLUE Top10連盟戦力', value: fmt.b(BLUE.top10_total), sub: BLUE.servers.join(' · ') },
-    { cls:'red',  label:'RED Top10連盟戦力',  value: fmt.b(RED.top10_total),  sub: RED.servers.join(' · ') },
-    { cls:'blue', label:'BLUE 最強連盟', value: BLUE.top_alliance_name.alliance.slice(0,18), sub: fmt.b(BLUE.top_alliance_name.power) + ' (' + BLUE.top_alliance_name.server + ')' },
-    { cls:'red',  label:'RED 最強連盟',  value: RED.top_alliance_name.alliance.slice(0,18),  sub: fmt.b(RED.top_alliance_name.power) + ' (' + RED.top_alliance_name.server + ')' },
-    { cls:'blue', label:'BLUE 最強指揮官', value: BLUE.top_cmd_name.name.slice(0,18), sub: fmt.m(BLUE.top_cmd_name.power) + ' (' + BLUE.top_cmd_name.server + ')' },
-    { cls:'red',  label:'RED 最強指揮官',  value: RED.top_cmd_name.name.slice(0,18),  sub: fmt.m(RED.top_cmd_name.power) + ' (' + RED.top_cmd_name.server + ')' },
+    { cls:'blue', label:'密林氏族 Top10連盟戦力', value: fmt.b(BLUE.top10_total), sub: BLUE.servers.join(' · ') },
+    { cls:'red',  label:'湿地氏族 Top10連盟戦力',  value: fmt.b(RED.top10_total),  sub: RED.servers.join(' · ') },
+    { cls:'blue', label:'密林氏族 最強連盟', value: BLUE.top_alliance_name.alliance.slice(0,18), sub: fmt.b(BLUE.top_alliance_name.power) + ' (' + BLUE.top_alliance_name.server + ')' },
+    { cls:'red',  label:'湿地氏族 最強連盟',  value: RED.top_alliance_name.alliance.slice(0,18),  sub: fmt.b(RED.top_alliance_name.power) + ' (' + RED.top_alliance_name.server + ')' },
+    { cls:'blue', label:'密林氏族 最強指揮官', value: BLUE.top_cmd_name.name.slice(0,18), sub: fmt.m(BLUE.top_cmd_name.power) + ' (' + BLUE.top_cmd_name.server + ')' },
+    { cls:'red',  label:'湿地氏族 最強指揮官',  value: RED.top_cmd_name.name.slice(0,18),  sub: fmt.m(RED.top_cmd_name.power) + ' (' + RED.top_cmd_name.server + ')' },
   ];
   document.getElementById('bloc-kpi-grid').innerHTML = kpis.map(k => `
     <div class="kpi ${k.cls}">
@@ -2139,9 +2361,9 @@ function renderBlocDeep() {
       labels: Array.from({length: 200}, (_, i) => i + 1),
       datasets: [
         { label: 'BLUE (陣営合算)', data: blueSorted.slice(0, 200).map(p => p/1e6),
-          borderColor: '#4A90E2', backgroundColor: 'rgba(74,144,226,0.1)', borderWidth: 2.5, fill: true, pointRadius: 0, tension: 0.2 },
+          borderColor: '#2ECC71', backgroundColor: 'rgba(46,204,113,0.1)', borderWidth: 2.5, fill: true, pointRadius: 0, tension: 0.2 },
         { label: 'RED (陣営合算)', data: redSorted.slice(0, 200).map(p => p/1e6),
-          borderColor: '#E74C3C', backgroundColor: 'rgba(231,76,60,0.1)', borderWidth: 2.5, fill: true, pointRadius: 0, tension: 0.2 },
+          borderColor: '#3498DB', backgroundColor: 'rgba(52,152,219,0.1)', borderWidth: 2.5, fill: true, pointRadius: 0, tension: 0.2 },
       ]
     },
     options: {
@@ -2160,7 +2382,8 @@ function renderBlocDeep() {
 
   // Bloc segments
   const segDefs = [
-    ['300M+', p => p >= 300e6],
+    ['350M+', p => p >= 350e6],
+    ['300〜350M', p => p >= 300e6 && p < 350e6],
     ['250〜300M', p => p >= 250e6 && p < 300e6],
     ['200〜250M', p => p >= 200e6 && p < 250e6],
     ['180〜200M', p => p >= 180e6 && p < 200e6],
@@ -2174,8 +2397,8 @@ function renderBlocDeep() {
     data: {
       labels: segDefs.map(x => x[0]),
       datasets: [
-        { label: 'BLUE', data: segDefs.map(([_,fn]) => BLUE.powers.filter(fn).length), backgroundColor: '#4A90E2', borderRadius: 2 },
-        { label: 'RED',  data: segDefs.map(([_,fn]) => RED.powers.filter(fn).length),  backgroundColor: '#E74C3C', borderRadius: 2 },
+        { label: '密林氏族', data: segDefs.map(([_,fn]) => BLUE.powers.filter(fn).length), backgroundColor: '#2ECC71', borderRadius: 2 },
+        { label: '湿地氏族',  data: segDefs.map(([_,fn]) => RED.powers.filter(fn).length),  backgroundColor: '#3498DB', borderRadius: 2 },
       ]
     },
     options: {
@@ -2199,10 +2422,10 @@ function renderBlocDeep() {
     data: {
       labels: tierLabels.map(n => 'Top ' + n),
       datasets: [
-        { label: 'BLUE 累積戦力', data: blueCumShare.map(v=>v/1e9), borderColor: '#4A90E2', backgroundColor: 'rgba(74,144,226,0.1)',
-          borderWidth: 3, fill: true, tension: 0.2, pointBackgroundColor: '#4A90E2', pointRadius: 4 },
-        { label: 'RED 累積戦力',  data: redCumShare.map(v=>v/1e9),  borderColor: '#E74C3C', backgroundColor: 'rgba(231,76,60,0.1)',
-          borderWidth: 3, fill: true, tension: 0.2, pointBackgroundColor: '#E74C3C', pointRadius: 4 },
+        { label: '密林氏族 累積戦力', data: blueCumShare.map(v=>v/1e9), borderColor: '#2ECC71', backgroundColor: 'rgba(46,204,113,0.1)',
+          borderWidth: 3, fill: true, tension: 0.2, pointBackgroundColor: '#2ECC71', pointRadius: 4 },
+        { label: '湿地氏族 累積戦力',  data: redCumShare.map(v=>v/1e9),  borderColor: '#3498DB', backgroundColor: 'rgba(52,152,219,0.1)',
+          borderWidth: 3, fill: true, tension: 0.2, pointBackgroundColor: '#3498DB', pointRadius: 4 },
       ]
     },
     options: {
@@ -2214,7 +2437,7 @@ function renderBlocDeep() {
           afterLabel: (c) => {
             const idx = c.dataIndex;
             const b = blueCumShare[idx], r = redCumShare[idx];
-            return '  シェア: ' + (c.dataset.label.includes('BLUE') ? (b/(b+r)*100).toFixed(1) : (r/(b+r)*100).toFixed(1)) + '%';
+            return '  シェア: ' + (c.dataset.label.includes('密林') ? (b/(b+r)*100).toFixed(1) : (r/(b+r)*100).toFixed(1)) + '%';
           }
         } }
       },
@@ -2280,7 +2503,7 @@ function renderBlocDeep() {
       <div class="tier-label ${label}">${label}</div>
       <div class="tier-members">
         ${members.map(s => `<div class="tier-member ${s.bloc}">
-          <span class="bloc-chip ${s.bloc}">${s.bloc.toUpperCase()}</span>
+          <span class="bloc-chip ${s.bloc}">${s.bloc === 'blue' ? '密林' : '湿地'}</span>
           <span class="tm-name">${s.server}</span>
           <span class="tm-power">${fmt.b(s.top10_total)}</span>
         </div>`).join('')}
@@ -2333,12 +2556,12 @@ function renderAdvancedAnalysis() {
     data: {
       datasets: [
         {
-          label: 'BLUE 陣営', data: blueLorenz, borderColor: '#4A90E2',
-          backgroundColor: 'rgba(74,144,226,0.15)', borderWidth: 2.5, fill: '+1', tension: 0.1, pointRadius: 0,
+          label: '密林氏族', data: blueLorenz, borderColor: '#2ECC71',
+          backgroundColor: 'rgba(46,204,113,0.15)', borderWidth: 2.5, fill: '+1', tension: 0.1, pointRadius: 0,
         },
         {
-          label: 'RED 陣営', data: redLorenz, borderColor: '#E74C3C',
-          backgroundColor: 'rgba(231,76,60,0.10)', borderWidth: 2.5, fill: false, tension: 0.1, pointRadius: 0,
+          label: '湿地氏族', data: redLorenz, borderColor: '#3498DB',
+          backgroundColor: 'rgba(52,152,219,0.10)', borderWidth: 2.5, fill: false, tension: 0.1, pointRadius: 0,
         },
         {
           label: '完全平等線', data: equality, borderColor: '#C9A961',
@@ -2395,9 +2618,9 @@ function renderAdvancedAnalysis() {
         let badge;
         if (m.invert) {
           badge = m.bRaw < m.rRaw
-            ? '<span style="color:var(--blue); font-size:10px; margin-left:8px;">▸ BLUE均質</span>'
+            ? '<span style="color:var(--blue); font-size:10px; margin-left:8px;">▸ 密林氏族均質</span>'
             : m.bRaw > m.rRaw
-            ? '<span style="color:var(--red); font-size:10px; margin-left:8px;">▸ RED均質</span>'
+            ? '<span style="color:var(--red); font-size:10px; margin-left:8px;">▸ 湿地氏族均質</span>'
             : '';
         } else {
           badge = '';
@@ -2435,8 +2658,8 @@ function renderAdvancedAnalysis() {
     type: 'line',
     data: {
       datasets: [
-        { label: 'BLUE 陣営', data: pyramidData(BLUE.powers), borderColor: '#4A90E2', backgroundColor: 'rgba(74,144,226,0.1)', borderWidth: 2.5, fill: false, tension: 0.2, pointRadius: 4 },
-        { label: 'RED 陣営', data: pyramidData(RED.powers), borderColor: '#E74C3C', backgroundColor: 'rgba(231,76,60,0.1)', borderWidth: 2.5, fill: false, tension: 0.2, pointRadius: 4 },
+        { label: '密林氏族', data: pyramidData(BLUE.powers), borderColor: '#2ECC71', backgroundColor: 'rgba(46,204,113,0.1)', borderWidth: 2.5, fill: false, tension: 0.2, pointRadius: 4 },
+        { label: '湿地氏族', data: pyramidData(RED.powers), borderColor: '#3498DB', backgroundColor: 'rgba(52,152,219,0.1)', borderWidth: 2.5, fill: false, tension: 0.2, pointRadius: 4 },
       ]
     },
     options: {
@@ -2466,8 +2689,8 @@ function renderAdvancedAnalysis() {
     data: {
       labels: thresholds.map(t => t + 'M+'),
       datasets: [
-        { label: 'BLUE 陣営', data: blueCoverage, backgroundColor: '#4A90E2', borderRadius: 2 },
-        { label: 'RED 陣営', data: redCoverage, backgroundColor: '#E74C3C', borderRadius: 2 },
+        { label: '密林氏族', data: blueCoverage, backgroundColor: '#2ECC71', borderRadius: 2 },
+        { label: '湿地氏族', data: redCoverage, backgroundColor: '#3498DB', borderRadius: 2 },
       ]
     },
     options: {
@@ -2484,11 +2707,11 @@ function renderAdvancedAnalysis() {
   });
 
   // カバレッジ表
-  let coverageHtml = `<div style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">陣営差(BLUE - RED)が大きい戦力帯ほど、その層での優劣が顕著</div>
+  let coverageHtml = `<div style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">陣営差(密林 - 湿地)が大きい戦力帯ほど、その層での優劣が顕著</div>
     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 2px; background: var(--border); border-radius: 4px; overflow: hidden;">
       <div style="background: var(--bg-panel-2); padding: 8px; font-size: 10px; color: var(--text-dim); text-align: center; letter-spacing: 1px; font-weight: 700;">戦力帯</div>
-      <div style="background: var(--bg-panel-2); padding: 8px; font-size: 10px; color: var(--blue); text-align: center; letter-spacing: 1px; font-weight: 700;">BLUE</div>
-      <div style="background: var(--bg-panel-2); padding: 8px; font-size: 10px; color: var(--red); text-align: center; letter-spacing: 1px; font-weight: 700;">RED</div>
+      <div style="background: var(--bg-panel-2); padding: 8px; font-size: 10px; color: var(--blue); text-align: center; letter-spacing: 1px; font-weight: 700;">密林</div>
+      <div style="background: var(--bg-panel-2); padding: 8px; font-size: 10px; color: var(--red); text-align: center; letter-spacing: 1px; font-weight: 700;">湿地</div>
       <div style="background: var(--bg-panel-2); padding: 8px; font-size: 10px; color: var(--accent); text-align: center; letter-spacing: 1px; font-weight: 700;">差 (B - R)</div>`;
 
   thresholds.forEach((t, i) => {
@@ -2549,7 +2772,7 @@ function renderEliteDensity() {
     return `<tr>
       <td class="center"><span class="rank-badge ${rankCls}">${i+1}</span></td>
       <td style="font-size: 12px;">${r.ally.alliance.slice(0, 32)}</td>
-      <td class="center"><span class="bloc-chip ${blocCls}">${blocCls.toUpperCase()}</span></td>
+      <td class="center"><span class="bloc-chip ${blocCls}">${blocCls === 'blue' ? '密林' : '湿地'}</span></td>
       <td class="right" style="color: var(--${blocCls}); font-weight: 700;">${r.top200Count} 名</td>
       <td class="right">${r.density.toFixed(1)}%</td>
       <td class="right">${(r.ally.power/1e9).toFixed(2)}</td>
@@ -2565,7 +2788,8 @@ const segmentState = { view: 'count', sort: 'bloc' };
 
 function renderServerSegmentHeatmap() {
   const segDefs = [
-    ['300M+',      p => p >= 300e6],
+    ['350M+',      p => p >= 350e6],
+    ['300〜350M',  p => p >= 300e6 && p < 350e6],
     ['250〜300M',  p => p >= 250e6 && p < 300e6],
     ['200〜250M',  p => p >= 200e6 && p < 250e6],
     ['180〜200M',  p => p >= 180e6 && p < 200e6],
@@ -2591,6 +2815,9 @@ function renderServerSegmentHeatmap() {
     const total = counts.reduce((a,b) => a+b, 0);
     return { server: s.server, bloc: s.bloc, counts, total, top10_total: s.top10_total };
   });
+
+  // エクスポート用にグリッドデータを保存
+  window._serverSegmentExportData = { grid, segDefs };
 
   // 最大値(セル彩色用)
   const maxCount = Math.max(...grid.flatMap(g => g.counts));
@@ -2626,8 +2853,8 @@ function renderServerSegmentHeatmap() {
     // 各セグメント
     g.counts.forEach((cnt, i) => {
       const intensity = maxCount > 0 ? cnt / maxCount : 0;
-      // 陣営色ベースの彩色
-      const baseColor = g.bloc === 'blue' ? '74,144,226' : '231,76,60';
+      // 陣営色ベースの彩色 (密林=緑, 湿地=青)
+      const baseColor = g.bloc === 'blue' ? '46,204,113' : '52,152,219';
       const bg = `rgba(${baseColor}, ${(intensity * 0.55 + 0.02).toFixed(3)})`;
       const pct = g.total > 0 ? (cnt / g.total * 100) : 0;
       const displayVal = segmentState.view === 'count' ? cnt : pct.toFixed(1) + '%';
@@ -2671,13 +2898,13 @@ function renderServerSegmentHeatmap() {
       <span>色濃度 = 人数の多さ</span>
       <div style="display:flex; align-items:center; gap:6px;">
         <span>少</span>
-        <div class="seg-gradient" style="background: linear-gradient(90deg, rgba(74,144,226,0.05), rgba(74,144,226,0.6))"></div>
-        <span>多 (BLUE)</span>
+        <div class="seg-gradient" style="background: linear-gradient(90deg, rgba(46,204,113,0.05), rgba(46,204,113,0.6))"></div>
+        <span>多 (密林)</span>
       </div>
       <div style="display:flex; align-items:center; gap:6px;">
         <span>少</span>
-        <div class="seg-gradient" style="background: linear-gradient(90deg, rgba(231,76,60,0.05), rgba(231,76,60,0.6))"></div>
-        <span>多 (RED)</span>
+        <div class="seg-gradient" style="background: linear-gradient(90deg, rgba(52,152,219,0.05), rgba(52,152,219,0.6))"></div>
+        <span>多 (湿地)</span>
       </div>
     </div>
   `;
@@ -2709,7 +2936,7 @@ function renderServerSegmentHeatmap() {
 function renderMatchup() {
   // 4x4 grid: BLUE rows, RED columns
   const cells = [];
-  cells.push('<div class="matchup-cell header-corner">BLUE \\ RED</div>');
+  cells.push('<div class="matchup-cell header-corner">密林 \\ 湿地</div>');
   RED_SERVERS.forEach(r => {
     cells.push(`<div class="matchup-cell header-red">${r}<div style="font-size:10px; opacity:0.8; font-weight:normal; margin-top:2px;">${fmt.b(SERVER_MAP[r].top10_total)}</div></div>`);
   });
@@ -2736,11 +2963,11 @@ function renderMatchup() {
   });
   document.getElementById('matchup-matrix').innerHTML = `<div class="matchup-table">${cells.join('')}</div>
     <div class="legend-chips" style="margin-top:14px;">
-      <span class="insight blue" style="padding: 4px 10px; font-size: 11px;">BLUE圧勝: +25%超</span>
-      <span class="insight blue" style="padding: 4px 10px; font-size: 11px;">BLUE優勢: +8〜25%</span>
+      <span class="insight blue" style="padding: 4px 10px; font-size: 11px;">密林圧勝: +25%超</span>
+      <span class="insight blue" style="padding: 4px 10px; font-size: 11px;">密林優勢: +8〜25%</span>
       <span class="insight" style="padding: 4px 10px; font-size: 11px;">拮抗: ±8%以内</span>
-      <span class="insight red" style="padding: 4px 10px; font-size: 11px;">RED優勢: -8〜-25%</span>
-      <span class="insight red" style="padding: 4px 10px; font-size: 11px;">RED圧勝: -25%超</span>
+      <span class="insight red" style="padding: 4px 10px; font-size: 11px;">湿地優勢: -8〜-25%</span>
+      <span class="insight red" style="padding: 4px 10px; font-size: 11px;">湿地圧勝: -25%超</span>
     </div>`;
 
   // 詳細マッチアップ
@@ -2791,13 +3018,13 @@ function renderMatchupDetail(blueSrv, redSrv) {
 
   let html = `<div style="display:grid; grid-template-columns: 1fr auto 1fr; gap:20px; align-items:center; margin-bottom:20px;">
     <div style="text-align:center;">
-      <div style="font-size:11px; color:var(--blue); letter-spacing:2px; font-weight:700;">BLUE</div>
+      <div style="font-size:11px; color:var(--blue); letter-spacing:2px; font-weight:700;">密林</div>
       <div style="font-size:24px; font-weight:700; color:var(--text); margin-top:4px;">${blueSrv}</div>
       <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">${B.top_alliance_name}</div>
     </div>
     <div style="font-size:28px; font-weight:900; color:var(--accent); letter-spacing:2px;">VS</div>
     <div style="text-align:center;">
-      <div style="font-size:11px; color:var(--red); letter-spacing:2px; font-weight:700;">RED</div>
+      <div style="font-size:11px; color:var(--red); letter-spacing:2px; font-weight:700;">湿地</div>
       <div style="font-size:24px; font-weight:700; color:var(--text); margin-top:4px;">${redSrv}</div>
       <div style="font-size:12px; color:var(--text-dim); margin-top:4px;">${R.top_alliance_name}</div>
     </div>
@@ -2810,9 +3037,9 @@ function renderMatchupDetail(blueSrv, redSrv) {
     const ratio = m.r > 0 ? m.b / m.r : 1;
     let diffLabel;
     if (m.invertCompare) {
-      diffLabel = m.b < m.r ? `BLUE優 (${((m.r/m.b - 1)*100).toFixed(1)}%低)` : m.b > m.r ? `RED優 (${((m.b/m.r - 1)*100).toFixed(1)}%低)` : '同等';
+      diffLabel = m.b < m.r ? `密林優 (${((m.r/m.b - 1)*100).toFixed(1)}%低)` : m.b > m.r ? `湿地優 (${((m.b/m.r - 1)*100).toFixed(1)}%低)` : '同等';
     } else {
-      diffLabel = ratio > 1 ? `+${((ratio-1)*100).toFixed(1)}% BLUE` : `+${((1/ratio-1)*100).toFixed(1)}% RED`;
+      diffLabel = ratio > 1 ? `+${((ratio-1)*100).toFixed(1)}% 密林` : `+${((1/ratio-1)*100).toFixed(1)}% 湿地`;
     }
     return `
     <div class="vs-bar-row">
@@ -2849,7 +3076,7 @@ function renderOptimalMatching() {
   
   // BLUE視点: 自陣営勝利数最大化
   let bestForBlue = null;
-  // BLUE 視点の悪夢: 自陣営勝利数最小化 (RED最適戦略)
+  // 密林氏族視点の悪夢: 自陣営勝利数最小化 (湿地氏族最適戦略)
   let worstForBlue = null;
   
   perms.forEach(redOrder => {
@@ -2898,28 +3125,28 @@ function renderOptimalMatching() {
     <div class="grid-2">
       <div>
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-          <span style="background:var(--blue); color:white; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:700; letter-spacing:1px;">BLUE最適</span>
+          <span style="background:var(--blue); color:white; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:700; letter-spacing:1px;">密林氏族最適</span>
           <span style="font-size:13px; color:var(--text-dim);">自陣営勝利数を最大化する割当</span>
         </div>
-        <div style="background:rgba(74,144,226,0.08); padding:10px; border-radius:3px; margin-bottom:10px; font-size:12px; color:var(--blue);">
-          <strong>BLUE勝利: ${bestForBlue.blueWins}/4</strong> ／ 戦力合計差 ${fmt.b(bestForBlue.blueTotal)} vs ${fmt.b(bestForBlue.redTotal)}
+        <div style="background:rgba(46,204,113,0.08); padding:10px; border-radius:3px; margin-bottom:10px; font-size:12px; color:var(--blue);">
+          <strong>密林氏族勝利: ${bestForBlue.blueWins}/4</strong> ／ 戦力合計差 ${fmt.b(bestForBlue.blueTotal)} vs ${fmt.b(bestForBlue.redTotal)}
         </div>
         ${bestForBlue.matches.map(renderMatch).join('')}
       </div>
       <div>
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-          <span style="background:var(--red); color:white; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:700; letter-spacing:1px;">RED最適</span>
-          <span style="font-size:13px; color:var(--text-dim);">RED視点の最適(BLUE被害最大化)</span>
+          <span style="background:var(--red); color:white; padding:3px 10px; border-radius:2px; font-size:11px; font-weight:700; letter-spacing:1px;">湿地氏族最適</span>
+          <span style="font-size:13px; color:var(--text-dim);">湿地氏族視点の最適(密林氏族被害最大化)</span>
         </div>
-        <div style="background:rgba(231,76,60,0.08); padding:10px; border-radius:3px; margin-bottom:10px; font-size:12px; color:var(--red);">
-          <strong>BLUE勝利: ${worstForBlue.blueWins}/4</strong> ／ 戦力合計差 ${fmt.b(worstForBlue.blueTotal)} vs ${fmt.b(worstForBlue.redTotal)}
+        <div style="background:rgba(52,152,219,0.08); padding:10px; border-radius:3px; margin-bottom:10px; font-size:12px; color:var(--red);">
+          <strong>密林氏族勝利: ${worstForBlue.blueWins}/4</strong> ／ 戦力合計差 ${fmt.b(worstForBlue.blueTotal)} vs ${fmt.b(worstForBlue.redTotal)}
         </div>
         ${worstForBlue.matches.map(renderMatch).join('')}
       </div>
     </div>
     <div class="insight" style="margin-top:16px;">
-      ▸ 陣営総戦力は固定のため、割当によって <strong>BLUE勝利数は${worstForBlue.blueWins}〜${bestForBlue.blueWins}/4</strong> で変動。
-      戦闘マッチングの意思決定権がある場合、上記「BLUE最適」の組合せを目指す価値があります。
+      ▸ 陣営総戦力は固定のため、割当によって <strong>密林氏族勝利数は${worstForBlue.blueWins}〜${bestForBlue.blueWins}/4</strong> で変動。
+      戦闘マッチングの意思決定権がある場合、上記「密林氏族最適」の組合せを目指す価値があります。
       ${bestForBlue.blueWins === 4 ? '最適割当なら<strong>4戦全勝</strong>も狙える盤面です。' : ''}
     </div>
   `;
@@ -2938,7 +3165,7 @@ function renderServers() {
     return `<tr class="${medal} ${blocCls}-row">
       <td class="center"><span class="rank-badge ${rankCls}">${i+1}</span></td>
       <td><span class="server-tag ${blocCls}">${s.server}</span></td>
-      <td><span class="bloc-chip ${blocCls}">${blocCls.toUpperCase()}</span></td>
+      <td><span class="bloc-chip ${blocCls}">${blocCls === 'blue' ? '密林' : '湿地'}</span></td>
       <td class="right">
         <div class="bar-cell">
           <div class="bar-fill ${blocCls}-bar"><div style="width:${(s.top10_total/maxTop10*100).toFixed(1)}%"></div></div>
@@ -2973,7 +3200,7 @@ function renderServers() {
     data: {
       labels: Array.from({length: 200}, (_, i) => i + 1),
       datasets: sorted.map(s => ({
-        label: s.server + ' (' + s.bloc.toUpperCase() + ')',
+        label: s.server + ' (' + (s.bloc === 'blue' ? '密林' : '湿地') + ')',
         data: [...s.powers].sort((a,b) => b-a).map(p => p/1e6),
         borderColor: COLORS.servers[s.server] || '#888',
         backgroundColor: 'transparent',
@@ -3030,7 +3257,7 @@ function renderAlliances() {
   if (!sel.hasChildNodes() || sel.children.length === 1) {
     SERVERS.forEach(s => {
       const o = document.createElement('option');
-      o.value = s.server; o.textContent = s.server + ' (' + s.bloc.toUpperCase() + ')';
+      o.value = s.server; o.textContent = s.server + ' (' + (s.bloc === 'blue' ? '密林' : '湿地') + ')';
       sel.appendChild(o);
     });
   }
@@ -3055,7 +3282,7 @@ function renderAlliances() {
     return `<tr class="${medal} ${blocCls}-row">
       <td class="center"><span class="rank-badge ${rankCls}">${r.overall_rank}</span></td>
       <td><span class="server-tag ${blocCls}">${r.server}</span></td>
-      <td><span class="bloc-chip ${blocCls}">${blocCls.toUpperCase()}</span></td>
+      <td><span class="bloc-chip ${blocCls}">${blocCls === 'blue' ? '密林' : '湿地'}</span></td>
       <td class="right">${r.server_rank}</td>
       <td>${r.alliance}</td>
       <td class="right">
@@ -3069,6 +3296,167 @@ function renderAlliances() {
   }).join('');
 }
 
+// ========== ALLIANCE SEGMENT HEATMAP ==========
+const allianceSegmentState = { view: 'count', sort: 'bloc', limit: 25 };
+
+function renderAllianceSegmentHeatmap() {
+  const segDefs = [
+    ['350M+',      p => p >= 350e6],
+    ['300〜350M',  p => p >= 300e6 && p < 350e6],
+    ['250〜300M',  p => p >= 250e6 && p < 300e6],
+    ['200〜250M',  p => p >= 200e6 && p < 250e6],
+    ['180〜200M',  p => p >= 180e6 && p < 200e6],
+    ['150〜180M',  p => p >= 150e6 && p < 180e6],
+    ['120〜150M',  p => p >= 120e6 && p < 150e6],
+    ['<120M',      p => p < 120e6],
+  ];
+
+  const top200 = [...DATA.commanders].sort((a,b) => b.power - a.power).slice(0, 200);
+  const allianceMembers = {};
+  top200.forEach(c => {
+    if (!c.tag) return;
+    const key = `${c.server}|${c.tag}`;
+    if (!allianceMembers[key]) allianceMembers[key] = [];
+    allianceMembers[key].push(c);
+  });
+
+  const rows = [];
+  DATA.alliances_overall.forEach(ally => {
+    if (!ally.tag) return;
+    const key = `${ally.server}|${ally.tag}`;
+    const members = allianceMembers[key] || [];
+    if (members.length === 0) return;
+    const counts = segDefs.map(([_, fn]) => members.filter(m => fn(m.power)).length);
+    rows.push({
+      ally, members, counts, total: members.length,
+      bloc: BLUE_SERVERS.includes(ally.server) ? 'blue' : 'red',
+    });
+  });
+
+  if (allianceSegmentState.sort === 'bloc') {
+    rows.sort((a, b) => {
+      if (a.bloc !== b.bloc) return a.bloc === 'blue' ? -1 : 1;
+      return b.ally.power - a.ally.power;
+    });
+  } else if (allianceSegmentState.sort === 'power') {
+    rows.sort((a, b) => b.ally.power - a.ally.power);
+  } else {
+    rows.sort((a, b) => b.total - a.total);
+  }
+
+  const displayRows = rows.slice(0, allianceSegmentState.limit);
+  // エクスポート用にグリッドデータを保存
+  window._allianceSegmentExportData = { rows: displayRows, segDefs };
+  const maxCount = Math.max(...displayRows.flatMap(g => g.counts), 1);
+  const cols = 1 + segDefs.length + 1;
+  const colTemplate = `220px repeat(${segDefs.length}, 1fr) 90px`;
+
+  const cells = [];
+  cells.push('<div class="seg-cell corner">連盟 (鯖)</div>');
+  segDefs.forEach(([label, _]) => cells.push(`<div class="seg-cell col-header">${label}</div>`));
+  cells.push('<div class="seg-cell col-header" style="color:var(--text)">Top200内</div>');
+
+  let lastBloc = null;
+  displayRows.forEach(g => {
+    if (allianceSegmentState.sort === 'bloc' && lastBloc !== null && lastBloc !== g.bloc) {
+      for (let i = 0; i < cols; i++) {
+        cells.push('<div class="seg-cell row-sep">— — —</div>');
+      }
+    }
+    lastBloc = g.bloc;
+
+    const allianceShort = g.ally.alliance.length > 26 ? g.ally.alliance.slice(0, 24) + '..' : g.ally.alliance;
+    cells.push(`<div class="seg-cell row-header-${g.bloc}" style="text-align:left; padding-left:10px;">
+      <div style="font-size: 12px; line-height: 1.2;">${allianceShort}</div>
+      <div style="font-size:10px; opacity:0.85; margin-top:2px; font-weight:normal;">${g.ally.server} · ${fmt.b(g.ally.power)}</div>
+    </div>`);
+
+    g.counts.forEach((cnt, i) => {
+      const intensity = maxCount > 0 ? cnt / maxCount : 0;
+      const baseColor = g.bloc === 'blue' ? '46,204,113' : '52,152,219';
+      const bg = `rgba(${baseColor}, ${(intensity * 0.55 + 0.02).toFixed(3)})`;
+      const pct = g.total > 0 ? (cnt / g.total * 100) : 0;
+      const displayVal = allianceSegmentState.view === 'count' ? cnt : pct.toFixed(1) + '%';
+      const subVal = allianceSegmentState.view === 'count'
+        ? (cnt > 0 ? pct.toFixed(0) + '%' : '—')
+        : (cnt > 0 ? cnt + '名' : '—');
+      cells.push(`<div class="seg-cell" style="background:${bg}">
+        <div class="seg-value">${displayVal}</div>
+        <div class="seg-sub">${subVal}</div>
+      </div>`);
+    });
+
+    cells.push(`<div class="seg-cell total-col">
+      <div class="seg-value">${g.total}</div>
+      <div class="seg-sub">名</div>
+    </div>`);
+  });
+
+  const colTotals = segDefs.map((_, i) => displayRows.reduce((s, g) => s + g.counts[i], 0));
+  const grandTotal = colTotals.reduce((a,b) => a+b, 0);
+  cells.push('<div class="seg-cell total-row" style="text-align:left; padding-left:10px;">合計 (表示中)</div>');
+  colTotals.forEach(t => {
+    const pct = grandTotal > 0 ? (t / grandTotal * 100) : 0;
+    cells.push(`<div class="seg-cell total-row">
+      <div class="seg-value">${t}</div>
+      <div class="seg-sub">${pct.toFixed(1)}%</div>
+    </div>`);
+  });
+  cells.push(`<div class="seg-cell total-row" style="color:var(--accent)">
+    <div class="seg-value">${grandTotal}</div>
+    <div class="seg-sub">名</div>
+  </div>`);
+
+  const html = `
+    <div class="seg-heatmap" style="grid-template-columns: ${colTemplate}">
+      ${cells.join('')}
+    </div>
+    <div class="seg-legend">
+      <span>色濃度 = 人数の多さ</span>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span>少</span>
+        <div class="seg-gradient" style="background: linear-gradient(90deg, rgba(46,204,113,0.05), rgba(46,204,113,0.6))"></div>
+        <span>多 (密林)</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <span>少</span>
+        <div class="seg-gradient" style="background: linear-gradient(90deg, rgba(52,152,219,0.05), rgba(52,152,219,0.6))"></div>
+        <span>多 (湿地)</span>
+      </div>
+      <span style="margin-left: auto; color: var(--text-dimmer);">表示中: ${displayRows.length} / 全${rows.length}連盟 (Top200出現)</span>
+    </div>
+  `;
+  document.getElementById('alliance-segment-heatmap').innerHTML = html;
+
+  if (!document.getElementById('alliance-segment-heatmap').dataset.bound) {
+    document.querySelectorAll('[data-aseg-view]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-aseg-view]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        allianceSegmentState.view = btn.dataset.asegView;
+        renderAllianceSegmentHeatmap();
+      });
+    });
+    document.querySelectorAll('[data-aseg-sort]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-aseg-sort]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        allianceSegmentState.sort = btn.dataset.asegSort;
+        renderAllianceSegmentHeatmap();
+      });
+    });
+    document.querySelectorAll('[data-aseg-limit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-aseg-limit]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        allianceSegmentState.limit = parseInt(btn.dataset.asegLimit);
+        renderAllianceSegmentHeatmap();
+      });
+    });
+    document.getElementById('alliance-segment-heatmap').dataset.bound = '1';
+  }
+}
+
 // ========== COMMANDERS TAB ==========
 let cmdState = { server: '', search: '', minPower: 0, limit: 200, bloc: 'all' };
 function renderCommanders() {
@@ -3076,7 +3464,7 @@ function renderCommanders() {
   if (!sel.hasChildNodes() || sel.children.length === 1) {
     SERVERS.forEach(s => {
       const o = document.createElement('option');
-      o.value = s.server; o.textContent = s.server + ' (' + s.bloc.toUpperCase() + ')';
+      o.value = s.server; o.textContent = s.server + ' (' + (s.bloc === 'blue' ? '密林' : '湿地') + ')';
       sel.appendChild(o);
     });
   }
@@ -3102,7 +3490,7 @@ function renderCommanders() {
     return `<tr class="${medal} ${blocCls}-row">
       <td class="center"><span class="rank-badge ${rankCls}">${r.overall_rank}</span></td>
       <td><span class="server-tag ${blocCls}">${r.server}</span></td>
-      <td><span class="bloc-chip ${blocCls}">${blocCls.toUpperCase()}</span></td>
+      <td><span class="bloc-chip ${blocCls}">${blocCls === 'blue' ? '密林' : '湿地'}</span></td>
       <td class="right">${r.rank}</td>
       <td>${r.name}</td>
       <td class="right">
@@ -3210,10 +3598,10 @@ function render1v1Table() {
     const diffPct = (ratio - 1) * 100;
     let verdictClass, verdictText;
     if (Math.abs(diffPct) < 5) { verdictClass = 'color:var(--accent); font-weight:700;'; verdictText = '拮抗'; }
-    else if (diffPct > 15) { verdictClass = 'color:var(--blue); font-weight:700;'; verdictText = 'BLUE優勢'; }
-    else if (diffPct > 5) { verdictClass = 'color:var(--blue);'; verdictText = 'BLUE微優'; }
-    else if (diffPct < -15) { verdictClass = 'color:var(--red); font-weight:700;'; verdictText = 'RED優勢'; }
-    else { verdictClass = 'color:var(--red);'; verdictText = 'RED微優'; }
+    else if (diffPct > 15) { verdictClass = 'color:var(--blue); font-weight:700;'; verdictText = '密林優勢'; }
+    else if (diffPct > 5) { verdictClass = 'color:var(--blue);'; verdictText = '密林微優'; }
+    else if (diffPct < -15) { verdictClass = 'color:var(--red); font-weight:700;'; verdictText = '湿地優勢'; }
+    else { verdictClass = 'color:var(--red);'; verdictText = '湿地微優'; }
     const ratioText = ratio >= 1 ? ratio.toFixed(2) + '×' : (1/ratio).toFixed(2) + '×';
     const ratioColor = ratio >= 1 ? 'var(--blue)' : 'var(--red)';
     rows.push(`<tr>
@@ -3272,7 +3660,7 @@ function renderPairs(blocName, tableId) {
 function renderWarSelector(side) {
   const container = document.getElementById(`war-${side}-selector`);
   const srvs = side === 'blue' ? BLUE_SERVERS : RED_SERVERS;
-  const label = side === 'blue' ? 'BLUE' : 'RED';
+  const label = side === 'blue' ? '密林氏族' : '湿地氏族';
   const alliances = [...DATA.alliances_overall].filter(a => srvs.includes(a.server)).sort((a,b) => b.power - a.power);
   const state = warState[side];
 
@@ -3389,7 +3777,7 @@ function simulateAllianceWar() {
     const ecp = combatBase * coopMult * dev * pBonus * matchup * tacMult * cityMult;
 
     return {
-      side: side.toUpperCase(),
+      side: side === 'blue' ? '密林氏族' : '湿地氏族',
       members,
       rawPower, combatBase,
       coopMult, coopLabel,
@@ -3416,7 +3804,7 @@ function simulateAllianceWar() {
     winnerCls = 'draw';
     verdict = `実効戦力差 ${diffPct.toFixed(1)}%。勝敗は紙一重。戦場の運や細部の戦術判断で結果が変わる領域。`;
   } else {
-    const winSide = B.ecp > R.ecp ? 'BLUE' : 'RED';
+    const winSide = B.ecp > R.ecp ? '密林氏族' : '湿地氏族';
     winnerCls = B.ecp > R.ecp ? 'blue' : 'red';
     if (diffPct < 35) {
       winner = `${winSide} 優勢勝利`;
@@ -3442,7 +3830,7 @@ function simulateAllianceWar() {
     <div class="red-side-fill" style="flex: ${rShare}">${rShare.toFixed(1)}%</div>`;
 
   function br(S) {
-    const clr = S.side === 'BLUE' ? 'var(--blue)' : 'var(--red)';
+    const clr = S.side === '密林氏族' ? 'var(--blue)' : 'var(--red)';
     const icons = { tank: '🛡 TANK', missile: '🚀 MISSILE', aircraft: '✈ AIRCRAFT' };
     const rolelabel = S.isAttacker ? '攻撃側' : '守備側';
     const memberHtml = S.members.map(m => `<div style="font-size:10.5px; color:var(--text-dim); padding: 2px 0;">· ${m.alliance.slice(0,28)} (${fmt.b(m.power)}, ${m.server})</div>`).join('');
@@ -3467,13 +3855,13 @@ function simulateAllianceWar() {
   const insights = [verdict];
   // 下剋上検出
   if (B.rawPower < R.rawPower && B.ecp > R.ecp) {
-    insights.push('<strong>▸ 下剋上注目</strong>: BLUE は表示戦力で劣勢ながら、連携・兵種相性・戦術で逆転。');
+    insights.push('<strong>▸ 下剋上注目</strong>: 密林氏族 は表示戦力で劣勢ながら、連携・兵種相性・戦術で逆転。');
   } else if (R.rawPower < B.rawPower && R.ecp > B.ecp) {
-    insights.push('<strong>▸ 下剋上注目</strong>: RED (守備側) は戦力で劣勢ながら、都市補正と守備地形で逆転。');
+    insights.push('<strong>▸ 下剋上注目</strong>: 湿地氏族 (守備側) は戦力で劣勢ながら、都市補正と守備地形で逆転。');
   }
   // 兵種相性
   if (B.matchup > 1 || R.matchup > 1) {
-    const adv = B.matchup > 1 ? 'BLUE' : 'RED';
+    const adv = B.matchup > 1 ? '密林氏族' : '湿地氏族';
     insights.push(`▸ 兵種相性で ${adv} が +20% の優位。相性を変えれば戦況は大きく変わる。`);
   }
   // 都市補正の影響
@@ -3526,8 +3914,8 @@ function renderWarRounds(B, R) {
         const rPctOfInit = (r.rAfter / R.ecp * 100);
         return `<div style="background:var(--bg-panel-2); padding:10px; border-radius:3px; font-size:11px;">
           <div style="color:var(--accent); font-weight:700; margin-bottom:6px;">ROUND ${r.round}</div>
-          <div style="color:var(--blue); margin:3px 0;">BLUE: ${fmt.b(r.bAfter)} (残${bPctOfInit.toFixed(0)}%)</div>
-          <div style="color:var(--red); margin:3px 0;">RED: ${fmt.b(r.rAfter)} (残${rPctOfInit.toFixed(0)}%)</div>
+          <div style="color:var(--blue); margin:3px 0;">密林氏族: ${fmt.b(r.bAfter)} (残${bPctOfInit.toFixed(0)}%)</div>
+          <div style="color:var(--red); margin:3px 0;">湿地氏族: ${fmt.b(r.rAfter)} (残${rPctOfInit.toFixed(0)}%)</div>
         </div>`;
       }).join('')}
     </div>
@@ -3541,7 +3929,7 @@ function renderWarRounds(B, R) {
 const WAR_SCENARIOS = [
   {
     name: '最強連盟 直接対決 (1v1)',
-    desc: 'BLUE最強 vs RED最強の野戦。連盟戦の最重要カード。',
+    desc: '密林氏族最強 vs 湿地氏族最強の野戦。連盟戦の最重要カード。',
     setup: () => {
       warState.mode = '1v1';
       warState.tactic = 'direct';
@@ -3554,7 +3942,7 @@ const WAR_SCENARIOS = [
   },
   {
     name: 'Lv6 都市防衛 (1v1)',
-    desc: '最強拠点の死守。都市守備補正+60%。BLUE攻撃 vs RED守備。',
+    desc: '最強拠点の死守。都市守備補正+60%。密林氏族攻撃 vs 湿地氏族守備。',
     setup: () => {
       warState.mode = '1v1';
       warState.tactic = 'siege';
@@ -3601,7 +3989,7 @@ const WAR_SCENARIOS = [
   },
   {
     name: 'Burn Squad戦術 (2v2 攻)',
-    desc: 'BLUE主力+小連盟による波状攻撃。守備側兵力を-15%削り。',
+    desc: '密林氏族主力+小連盟による波状攻撃。守備側兵力を-15%削り。',
     setup: () => {
       warState.mode = '2v2';
       warState.tactic = 'burn';
@@ -3629,7 +4017,7 @@ const WAR_SCENARIOS = [
   },
   {
     name: '[9N1] 出陣シナリオ',
-    desc: '自連盟 [9N1] 区ノー雑技団 vs RED Top10連盟のいずれか。',
+    desc: '自連盟 [9N1] 区ノー雑技団 vs 湿地氏族 Top10連盟のいずれか。',
     setup: () => {
       warState.mode = '1v1';
       warState.tactic = 'direct';
@@ -3844,7 +4232,7 @@ function renderAllianceMemberDetail() {
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 14px;">
       <div>
         <div style="display:flex; align-items:center; gap:12px; padding:14px; background:var(--bg-panel-2); border-radius:4px; margin-bottom:16px;">
-          <span class="bloc-chip ${blocCls}" style="font-size:11px; padding: 4px 10px;">${blocCls.toUpperCase()}</span>
+          <span class="bloc-chip ${blocCls}" style="font-size:11px; padding: 4px 10px;">${blocCls === 'blue' ? '密林' : '湿地'}</span>
           <span class="server-tag ${blocCls}">${ally.server}</span>
           <div>
             <div style="font-size:16px; font-weight:700; color:var(--text);">${ally.alliance}</div>
@@ -3980,7 +4368,7 @@ function renderDensityTable() {
     return `<tr>
       <td class="center"><span class="rank-badge ${i < 3 ? 'r'+(i+1) : 'rn'}">${i+1}</span></td>
       <td style="font-size: 12px;">${r.ally.alliance.slice(0,30)}</td>
-      <td class="center"><span class="bloc-chip ${blocCls}">${blocCls.toUpperCase()}</span></td>
+      <td class="center"><span class="bloc-chip ${blocCls}">${blocCls === 'blue' ? '密林' : '湿地'}</span></td>
       <td class="center"><span class="server-tag ${blocCls}">${r.ally.server}</span></td>
       <td class="right" style="font-weight:700; color: var(--${blocCls});">${r.count} 名</td>
       <td class="right">${r.ratio.toFixed(1)}%</td>
@@ -4026,8 +4414,8 @@ function renderAllianceCompare() {
 
   const blocA = bloc(allyA.server);
   const blocB = bloc(allyB.server);
-  const colorA = blocA === 'blue' ? '#4A90E2' : '#E74C3C';
-  const colorB = blocB === 'blue' ? '#4A90E2' : '#E74C3C';
+  const colorA = blocA === 'blue' ? '#2ECC71' : '#3498DB';
+  const colorB = blocB === 'blue' ? '#2ECC71' : '#3498DB';
 
   if (compareChart) compareChart.destroy();
   compareChart = new Chart(document.getElementById('chart-alliance-compare'), {
@@ -4155,7 +4543,7 @@ function renderSquadSelector(side) {
     const srvs = side === 'blue' ? BLUE_SERVERS : RED_SERVERS;
     const cmds = [...DATA.commanders].filter(c => srvs.includes(c.server)).sort((a,b) => b.power - a.power).slice(0, 300);
     if (!state.cmdId && cmds[0]) state.cmdId = cmds[0].overall_rank;
-    html += `<label>指揮官 (${side === 'blue' ? 'BLUE' : 'RED'}陣営 Top300)</label>
+    html += `<label>指揮官 (${side === 'blue' ? '密林' : '湿地'}氏族 Top300)</label>
       <select id="squad-${side}-cmd">
         ${cmds.map(c => `<option value="${c.overall_rank}" ${state.cmdId===c.overall_rank?'selected':''}>${c.name.slice(0,26)} (${fmt.m(c.power)}, ${c.server})</option>`).join('')}
       </select>`;
@@ -4307,7 +4695,7 @@ function simulateSquad() {
   let mhtml = '<h4 style="color:var(--accent); font-size:13px; margin-bottom:12px; letter-spacing:1px;">▸ 軍団マッチアップ マトリクス (ECP比)</h4>';
   mhtml += `<div style="overflow-x:auto;"><div style="display: grid; grid-template-columns: 100px repeat(${numRed}, 1fr); gap: 2px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; min-width: 500px;">`;
   // Header row
-  mhtml += '<div class="matchup-cell header-corner">BLUE \\ RED</div>';
+  mhtml += '<div class="matchup-cell header-corner">密林 \\ 湿地</div>';
   for (let j = 0; j < numRed; j++) {
     const rSq = squadState.red.squads[j];
     mhtml += `<div class="matchup-cell header-red" style="background: ${squadColors[j]}; color: var(--bg);">
@@ -4342,7 +4730,7 @@ function simulateSquad() {
   }
   mhtml += '</div></div>';
   mhtml += `<div style="margin-top: 10px; font-size: 11px; color: var(--text-dim);">
-    BLUE勝率: <strong style="color:var(--blue)">${blueWinCount}/${totalCells} (${(blueWinCount/totalCells*100).toFixed(0)}%)</strong>
+    密林氏族勝率: <strong style="color:var(--blue)">${blueWinCount}/${totalCells} (${(blueWinCount/totalCells*100).toFixed(0)}%)</strong>
   </div>`;
 
   document.getElementById('squad-result-matrix').innerHTML = mhtml;
@@ -4371,23 +4759,23 @@ function simulateSquad() {
   const advType = counters[redSq1.type];
   const advSquadIdx = squadState.blue.squads.findIndex(s => s.type === advType && s.purity >= 3);
 
-  let ohtml = `<h4 style="color:var(--accent); font-size:13px; margin-bottom:12px; letter-spacing:1px;">▸ BLUE 最適出撃判断</h4>`;
+  let ohtml = `<h4 style="color:var(--accent); font-size:13px; margin-bottom:12px; letter-spacing:1px;">▸ 密林氏族 最適出撃判断</h4>`;
   ohtml += `<div style="background: var(--bg-panel-2); padding: 14px; border-radius: 4px;">`;
   if (advSquadIdx >= 0) {
     const advSq = squadState.blue.squads[advSquadIdx];
     ohtml += `<div style="margin-bottom: 10px;">
-      <strong style="color: var(--blue); font-size: 14px;">⚔ RED 1軍 (${troopIcons[redSq1.type]} ${redSq1.type.toUpperCase()}) には ${advSquadIdx+1}軍 (${troopIcons[advSq.type]} ${advSq.type.toUpperCase()} +${((PURITY_BONUS[String(advSq.purity)]-1)*100).toFixed(0)}%) が兵種有利。</strong>
+      <strong style="color: var(--blue); font-size: 14px;">⚔ 湿地氏族 1軍 (${troopIcons[redSq1.type]} ${redSq1.type.toUpperCase()}) には ${advSquadIdx+1}軍 (${troopIcons[advSq.type]} ${advSq.type.toUpperCase()} +${((PURITY_BONUS[String(advSq.purity)]-1)*100).toFixed(0)}%) が兵種有利。</strong>
     </div>`;
     // 実際のマッチアップ結果を確認
     const cell = matrix[advSquadIdx][0];
-    const win = cell.blueWins ? 'BLUE勝利' : 'RED勝利';
+    const win = cell.blueWins ? '密林氏族勝利' : '湿地氏族勝利';
     const cls = cell.blueWins ? 'var(--blue)' : 'var(--red)';
     ohtml += `<div style="font-size: 12px; color: var(--text-dim);">
-      BLUE${advSquadIdx+1}軍 ECP ${fmt.b(cell.bECP)} vs RED1軍 ECP ${fmt.b(cell.rECP)} →
+      密林氏族${advSquadIdx+1}軍 ECP ${fmt.b(cell.bECP)} vs 湿地氏族1軍 ECP ${fmt.b(cell.rECP)} →
       <strong style="color: ${cls};">${win} (${cell.diffPct.toFixed(1)}% 差)</strong>
     </div>`;
   } else {
-    ohtml += `<div style="color: var(--red); font-size: 13px;">⚠ RED 1軍 (${redSq1.type}) に対する兵種有利の染め軍団がBLUEに不在。編成見直しを推奨。</div>`;
+    ohtml += `<div style="color: var(--red); font-size: 13px;">⚠ 湿地氏族 1軍 (${redSq1.type}) に対する兵種有利の染め軍団が密林氏族LUEに不在。編成見直しを推奨。</div>`;
   }
   ohtml += '</div>';
   document.getElementById('squad-result-optimal').innerHTML = ohtml;
@@ -4395,19 +4783,19 @@ function simulateSquad() {
   // インサイト
   const insights = [];
   const winRate = blueWinCount / totalCells * 100;
-  if (winRate >= 66) insights.push(`<strong>▸ BLUE有利</strong>: 全組合せの ${winRate.toFixed(0)}% で勝利。どの軍を出しても優位。`);
-  else if (winRate >= 50) insights.push(`<strong>▸ BLUE微優</strong>: 勝率 ${winRate.toFixed(0)}%。出撃軍の選択が重要。`);
-  else if (winRate >= 33) insights.push(`<strong>▸ RED微優</strong>: BLUE勝率 ${winRate.toFixed(0)}%。兵種相性を突かないと厳しい。`);
-  else insights.push(`<strong>▸ RED優勢</strong>: BLUE勝率 ${winRate.toFixed(0)}%。特定軍でのみ勝ち筋あり。`);
+  if (winRate >= 66) insights.push(`<strong>▸ 密林氏族有利</strong>: 全組合せの ${winRate.toFixed(0)}% で勝利。どの軍を出しても優位。`);
+  else if (winRate >= 50) insights.push(`<strong>▸ 密林氏族微優</strong>: 勝率 ${winRate.toFixed(0)}%。出撃軍の選択が重要。`);
+  else if (winRate >= 33) insights.push(`<strong>▸ 湿地氏族微優</strong>: 密林氏族勝率 ${winRate.toFixed(0)}%。兵種相性を突かないと厳しい。`);
+  else insights.push(`<strong>▸ 湿地氏族優勢</strong>: 密林氏族勝率 ${winRate.toFixed(0)}%。特定軍でのみ勝ち筋あり。`);
 
   // 染め度チェック
   const blueNoPure = squadState.blue.squads.slice(0, numBlue).filter(s => s.purity < 3).length;
-  if (blueNoPure > 0) insights.push(`▸ BLUE軍に染め度の低い軍が ${blueNoPure} 個あり。5染めに近づけると+5〜20%のボーナス獲得。`);
+  if (blueNoPure > 0) insights.push(`▸ 密林氏族軍に染め度の低い軍が ${blueNoPure} 個あり。5染めに近づけると+5〜20%のボーナス獲得。`);
 
   // 兵種被りチェック
   const blueTypes = squadState.blue.squads.slice(0, numBlue).map(s => s.type);
   const uniqueBlueTypes = new Set(blueTypes);
-  if (uniqueBlueTypes.size < 3) insights.push(`▸ BLUE 3兵種カバー不完全: ${Array.from(uniqueBlueTypes).join(', ')} のみ。3すくみ未対応兵種への対抗不可。`);
+  if (uniqueBlueTypes.size < 3) insights.push(`▸ 密林氏族 3兵種カバー不完全: ${Array.from(uniqueBlueTypes).join(', ')} のみ。3すくみ未対応兵種への対抗不可。`);
 
   document.getElementById('squad-result-box').classList.remove('hidden');
   document.getElementById('squad-result-insight').innerHTML = insights.join('<br>');
@@ -4435,7 +4823,7 @@ const SQUAD_SCENARIOS = [
   },
   {
     name: '無課金 vs 課金 (3軍 vs 4軍)',
-    desc: 'BLUE無課金 (3軍5染) vs RED課金 (4軍5染)。軍数差の影響を観察。',
+    desc: '密林氏族無課金 (3軍5染) vs 湿地氏族課金 (4軍5染)。軍数差の影響を観察。',
     setup: () => {
       const b = [...DATA.commanders].filter(c => BLUE_SERVERS.includes(c.server)).sort((a,b)=>b.power-a.power)[2];
       const r = [...DATA.commanders].filter(c => RED_SERVERS.includes(c.server)).sort((a,b)=>b.power-a.power)[2];
@@ -4452,7 +4840,7 @@ const SQUAD_SCENARIOS = [
   },
   {
     name: '下剋上狙い (相性で上位を崩す)',
-    desc: 'BLUE中堅がRED上位に兵種相性で挑む。兵種相性+20%の威力を検証。',
+    desc: '密林氏族中堅が湿地氏族上位に兵種相性で挑む。兵種相性+20%の威力を検証。',
     setup: () => {
       const b = [...DATA.commanders].filter(c => BLUE_SERVERS.includes(c.server)).sort((a,b)=>b.power-a.power)[20];
       const r = [...DATA.commanders].filter(c => RED_SERVERS.includes(c.server)).sort((a,b)=>b.power-a.power)[0];
@@ -4489,8 +4877,8 @@ const SQUAD_SCENARIOS = [
     }
   },
   {
-    name: '自連盟 [9N1] Top vs RED強者',
-    desc: '[9N1] 区ノー雑技団 最強メンバーがRED上位指揮官に挑む。',
+    name: '自連盟 [9N1] Top vs 湿地氏族強者',
+    desc: '[9N1] 区ノー雑技団 最強メンバーが湿地氏族上位指揮官に挑む。',
     setup: () => {
       const n9n1Top = [...DATA.commanders].filter(c => c.tag === '9N1' && c.server === '#324').sort((a,b)=>b.power-a.power)[0];
       const redTop = [...DATA.commanders].filter(c => RED_SERVERS.includes(c.server)).sort((a,b)=>b.power-a.power)[5];
@@ -4608,7 +4996,7 @@ function calcS6Modifiers(side) {
 function getS6BasePower(side) {
   if (s6State.unit === 'bloc') {
     const b = side === 'blue' ? BLUE : RED;
-    return { power: b.top10_total, name: (side === 'blue' ? 'BLUE' : 'RED') + ' 陣営合計戦力' };
+    return { power: b.top10_total, name: (side === 'blue' ? '密林氏族' : '湿地氏族') + ' 陣営合計戦力' };
   } else if (s6State.unit === 'alliance') {
     const srvs = side === 'blue' ? BLUE_SERVERS : RED_SERVERS;
     const top = [...DATA.alliances_overall].filter(a => srvs.includes(a.server)).sort((a,b) => b.power - a.power)[0];
@@ -4633,9 +5021,9 @@ function simulateS6() {
   const counters = { tank: 'missile', missile: 'aircraft', aircraft: 'tank' };
   let blueMatchup = 1.00, redMatchup = 1.00, matchupLabel = '同一兵種';
   if (counters[s6State.blue.troop] === s6State.red.troop) {
-    blueMatchup = 1.20; redMatchup = 1/1.20; matchupLabel = 'BLUE 有利 (+20%)';
+    blueMatchup = 1.20; redMatchup = 1/1.20; matchupLabel = '密林氏族 有利 (+20%)';
   } else if (counters[s6State.red.troop] === s6State.blue.troop) {
-    blueMatchup = 1/1.20; redMatchup = 1.20; matchupLabel = 'RED 有利 (+20%)';
+    blueMatchup = 1/1.20; redMatchup = 1.20; matchupLabel = '湿地氏族 有利 (+20%)';
   }
 
   // ECP計算
@@ -4658,12 +5046,12 @@ function simulateS6() {
   let uaoBlueBuff = 1.0, uaoRedBuff = 1.0, uaoNote = '無効';
   if (s6State.uao === 'auto') {
     const ratio = blueECP / redECP;
-    if (ratio < 0.5) { uaoBlueBuff = 1.15; uaoNote = 'BLUE劣勢 +15%'; }
-    else if (ratio < 0.7) { uaoBlueBuff = 1.10; uaoNote = 'BLUE劣勢 +10%'; }
-    else if (ratio < 0.85) { uaoBlueBuff = 1.05; uaoNote = 'BLUE劣勢 +5%'; }
-    else if (ratio > 2.0) { uaoRedBuff = 1.15; uaoNote = 'RED劣勢 +15%'; }
-    else if (ratio > 1.43) { uaoRedBuff = 1.10; uaoNote = 'RED劣勢 +10%'; }
-    else if (ratio > 1.18) { uaoRedBuff = 1.05; uaoNote = 'RED劣勢 +5%'; }
+    if (ratio < 0.5) { uaoBlueBuff = 1.15; uaoNote = '密林劣勢 +15%'; }
+    else if (ratio < 0.7) { uaoBlueBuff = 1.10; uaoNote = '密林劣勢 +10%'; }
+    else if (ratio < 0.85) { uaoBlueBuff = 1.05; uaoNote = '密林劣勢 +5%'; }
+    else if (ratio > 2.0) { uaoRedBuff = 1.15; uaoNote = '湿地劣勢 +15%'; }
+    else if (ratio > 1.43) { uaoRedBuff = 1.10; uaoNote = '湿地劣勢 +10%'; }
+    else if (ratio > 1.18) { uaoRedBuff = 1.05; uaoNote = '湿地劣勢 +5%'; }
   }
   blueECP *= uaoBlueBuff;
   redECP *= uaoRedBuff;
@@ -4688,7 +5076,7 @@ function simulateS6() {
     winnerCls = 'draw';
     verdict = `ECP差 ${diffPct.toFixed(1)}%。United As One補正下では決定打を欠く。`;
   } else {
-    const winSide = blueECP > redECP ? 'BLUE' : 'RED';
+    const winSide = blueECP > redECP ? '密林氏族' : '湿地氏族';
     winnerCls = blueECP > redECP ? 'blue' : 'red';
     if (diffPct < 30) {
       winner = `${winSide} 優勢勝利`;
@@ -4738,7 +5126,7 @@ function simulateS6() {
 
   // ブレイクダウン
   function br(side, base, mods, matchup, ecp, uaoBuff) {
-    const cls = side === 'BLUE' ? 'var(--blue)' : 'var(--red)';
+    const cls = side === '密林氏族' ? 'var(--blue)' : 'var(--red)';
     const totalBuff = (1+mods.tech) * (1+mods.influence) * (1+mods.altar) * (1+mods.awaken) * (1+mods.cards) * (1+mods.pact);
     return `<div class="breakdown-side">
       <h4 style="color:${cls}">${side} — ${base.name}</h4>
@@ -4752,8 +5140,8 @@ function simulateS6() {
   }
 
   document.getElementById('s6-result-breakdown').innerHTML =
-    br('BLUE', blueBase, blueMods, blueMatchup, blueECP, uaoBlueBuff) +
-    br('RED', redBase, redMods, redMatchup, redECP, uaoRedBuff);
+    br('密林氏族', blueBase, blueMods, blueMatchup, blueECP, uaoBlueBuff) +
+    br('湿地氏族', redBase, redMods, redMatchup, redECP, uaoRedBuff);
 
   // インサイト
   const insights = [verdict];
@@ -4762,7 +5150,7 @@ function simulateS6() {
   const redTotalBuff = (1+redMods.tech) * (1+redMods.influence) * (1+redMods.altar) * (1+redMods.awaken) * (1+redMods.cards) * (1+redMods.pact);
   const buffDiff = ((blueTotalBuff/redTotalBuff) - 1) * 100;
   if (Math.abs(buffDiff) > 10) {
-    const adv = buffDiff > 0 ? 'BLUE' : 'RED';
+    const adv = buffDiff > 0 ? '密林氏族' : '湿地氏族';
     insights.push(`<strong>▸ buff累積差</strong>: ${adv}陣営のbuff累積が ${Math.abs(buffDiff).toFixed(1)}% 上回る。表示戦力の見た目以上の差が生まれる。`);
   }
   if (uaoNote.includes('+15%') || uaoNote.includes('+10%')) {
@@ -4770,18 +5158,18 @@ function simulateS6() {
   }
   // 下剋上
   if (blueBase.power < redBase.power && blueECP > redECP) {
-    insights.push(`<strong>▸ 下剋上成立</strong>: BLUEは表示戦力で劣るが、buff累積と相性で逆転。S6では戦力差より<strong>buff蓄積戦略</strong>が重要。`);
+    insights.push(`<strong>▸ 下剋上成立</strong>: 密林氏族は表示戦力で劣るが、buff累積と相性で逆転。S6では戦力差より<strong>buff蓄積戦略</strong>が重要。`);
   } else if (redBase.power < blueBase.power && redECP > blueECP) {
-    insights.push(`<strong>▸ 下剋上成立</strong>: REDは表示戦力で劣るが、buff累積と相性で逆転。`);
+    insights.push(`<strong>▸ 下剋上成立</strong>: 湿地氏族は表示戦力で劣るが、buff累積と相性で逆転。`);
   }
   // 戦略アドバイス
   if (blueMods.tech < 0.06 || redMods.tech < 0.06) {
     insights.push(`▸ <strong>戦略</strong>: Faction Tech Tier 2 (+6%) はFaction Duelまでに到達したい最低ライン。陣営全体での貢献が必須。`);
   }
   if (s6State.blue.altars < 2 && s6State.red.altars >= 2) {
-    insights.push(`▸ <strong>BLUE戦略</strong>: REDがAltar 2個以上保有。BLUEもAltar奪取を急ぐ必要あり。`);
+    insights.push(`▸ <strong>密林氏族戦略</strong>: REDがAltar 2個以上保有。密林氏族もAltar奪取を急ぐ必要あり。`);
   } else if (s6State.red.altars < 2 && s6State.blue.altars >= 2) {
-    insights.push(`▸ <strong>RED戦略</strong>: BLUE優位のAltar保持。RED側はAltar奪還が必要。`);
+    insights.push(`▸ <strong>湿地氏族戦略</strong>: 密林氏族優位のAltar保持。湿地氏族側はAltar奪還が必要。`);
   }
 
   document.getElementById('s6-result-insight').innerHTML = insights.join('<br>');
@@ -4854,8 +5242,8 @@ const S6_SCENARIOS = [
     }
   },
   {
-    name: 'BLUE 圧倒型 (理想シナリオ)',
-    desc: 'BLUEが全buff最大、Altar3個保持。RED は buff蓄積が遅れた状況。',
+    name: '密林氏族 圧倒型 (理想シナリオ)',
+    desc: '密林氏族が全buff最大、Altar3個保持。湿地氏族は buff蓄積が遅れた状況。',
     setup: () => {
       s6State.blue = { tech: 4, influence: 5, altars: 3, awaken: 4, cards: 4, pact: 2, troop: 'tank' };
       s6State.red = { tech: 1, influence: 2, altars: 0, awaken: 2, cards: 1, pact: 0, troop: 'missile' };
@@ -4863,8 +5251,8 @@ const S6_SCENARIOS = [
     }
   },
   {
-    name: 'RED 逆転型 (United As One発動)',
-    desc: 'BLUEが大優勢、REDは劣勢でUnited As One +15%発動中。',
+    name: '湿地氏族 逆転型 (United As One発動)',
+    desc: '密林氏族が大優勢、湿地氏族は劣勢でUnited As One +15%発動中。',
     setup: () => {
       s6State.blue = { tech: 4, influence: 5, altars: 3, awaken: 4, cards: 4, pact: 2, troop: 'missile' };
       s6State.red = { tech: 1, influence: 1, altars: 0, awaken: 1, cards: 0, pact: 0, troop: 'aircraft' };
@@ -4939,7 +5327,7 @@ function renderS6BuffChart() {
         ...dataIndividual.map((d, i) => ({
           label: d.name,
           data: d.vals.map(v => v * 100),
-          backgroundColor: ['#4A90E2', '#3498DB', '#2ECC71', '#E67E22', '#9B59B6', '#E74C3C'][i],
+          backgroundColor: ['#C9A961', '#D4AF37', '#F39C12', '#E67E22', '#9B59B6', '#A569BD'][i],
           stack: 'individual',
           borderRadius: 2,
         })),
@@ -4996,7 +5384,7 @@ const SCENARIOS = [
   },
   {
     name: '#324 vs #307 (最強鯖対決)',
-    desc: '自鯖 #324 (BLUE 2位) vs 敵エース #307 (RED 2位)。',
+    desc: '自鯖 #324 (密林氏族 2位) vs 敵エース #307 (湿地氏族 2位)。',
     setup: () => {
       simState.mode = 'server';
       simState.blue.server = '#324';
@@ -5005,7 +5393,7 @@ const SCENARIOS = [
   },
   {
     name: '#311 vs #296 (陣営トップ対決)',
-    desc: 'BLUE最強 #311 vs RED最強 #296。上層陣営対決シナリオ。',
+    desc: '密林氏族最強 #311 vs 湿地氏族最強 #296。上層陣営対決シナリオ。',
     setup: () => {
       simState.mode = 'server';
       simState.blue.server = '#311';
@@ -5014,7 +5402,7 @@ const SCENARIOS = [
   },
   {
     name: '#332 vs #304 (下位鯖対決)',
-    desc: 'BLUE最弱 #332 vs RED最弱 #304。弱小鯖同士のぶつかり合い。',
+    desc: '密林氏族最弱 #332 vs 湿地氏族最弱 #304。弱小鯖同士のぶつかり合い。',
     setup: () => {
       simState.mode = 'server';
       simState.blue.server = '#332';
@@ -5080,7 +5468,7 @@ function renderSimSelector(side) {
     const blocName = side === 'blue' ? 'blue' : 'red';
     state.bloc = blocName;
     html += `<label>陣営 (固定)</label>
-      <select disabled><option>${blocName === 'blue' ? 'BLUE 陣営 (#324, #311, #412, #332)' : 'RED 陣営 (#307, #296, #335, #304)'}</option></select>
+      <select disabled><option>${blocName === 'blue' ? '密林氏族 (#324, #311, #412, #332)' : '湿地氏族 (#307, #296, #335, #304)'}</option></select>
       <div style="font-size:11px; color:var(--text-dim); margin-top:6px;">Top10連盟の合計戦力で比較</div>`;
   } else if (mode === 'custom') {
     html += `<label>表示戦力</label>
@@ -5089,15 +5477,15 @@ function renderSimSelector(side) {
   } else if (mode === 'server') {
     const srvs = side === 'blue' ? BLUE_SERVERS : RED_SERVERS;
     if (!srvs.includes(state.server)) state.server = srvs[0];
-    html += `<label>サーバー (${side === 'blue' ? 'BLUE' : 'RED'} 陣営)</label>
+    html += `<label>サーバー (${side === 'blue' ? '密林' : '湿地'}氏族)</label>
       <select id="${side}-server">
         ${srvs.map(s => `<option value="${s}" ${s===state.server?'selected':''}>${s} (Top10: ${fmt.b(SERVER_MAP[s].top10_total)})</option>`).join('')}
       </select>`;
   } else if (mode === 'alliance') {
     const srvs = side === 'blue' ? BLUE_SERVERS : RED_SERVERS;
-    html += `<label>サーバー限定 (${side === 'blue' ? 'BLUE' : 'RED'} 陣営内)</label>
+    html += `<label>サーバー限定 (${side === 'blue' ? '密林' : '湿地'}氏族内)</label>
       <select id="${side}-server">
-        <option value="">全${side === 'blue' ? 'BLUE' : 'RED'}鯖</option>
+        <option value="">全${side === 'blue' ? '密林' : '湿地'}鯖</option>
         ${srvs.map(s => `<option value="${s}" ${s===state.server?'selected':''}>${s}</option>`).join('')}
       </select>
       <label>連盟</label>
@@ -5106,9 +5494,9 @@ function renderSimSelector(side) {
       </select>`;
   } else {
     const srvs = side === 'blue' ? BLUE_SERVERS : RED_SERVERS;
-    html += `<label>サーバー限定 (${side === 'blue' ? 'BLUE' : 'RED'} 陣営内)</label>
+    html += `<label>サーバー限定 (${side === 'blue' ? '密林' : '湿地'}氏族内)</label>
       <select id="${side}-server">
-        <option value="">全${side === 'blue' ? 'BLUE' : 'RED'}鯖</option>
+        <option value="">全${side === 'blue' ? '密林' : '湿地'}鯖</option>
         ${srvs.map(s => `<option value="${s}" ${s===state.server?'selected':''}>${s}</option>`).join('')}
       </select>
       <label>指揮官 (上位200)</label>
@@ -5148,10 +5536,10 @@ function getEntityPower(side) {
   const s = simState[side];
   if (simState.mode === 'bloc') {
     const b = side === 'blue' ? BLUE : RED;
-    return { power: b.top10_total, name: (side==='blue'?'BLUE':'RED')+' 陣営 Top10連盟合計 (40連盟)' };
+    return { power: b.top10_total, name: (side==='blue'?'密林氏族':'湿地氏族')+' Top10連盟合計 (40連盟)' };
   } else if (simState.mode === 'custom') {
     const v = parseFloat(document.getElementById(side + '-custom-power').value) || 0;
-    return { power: v * 1e9, name: (side==='blue'?'BLUE':'RED')+' カスタム勢力' };
+    return { power: v * 1e9, name: (side==='blue'?'密林氏族':'湿地氏族')+' カスタム勢力' };
   } else if (simState.mode === 'server') {
     const srv = SERVER_MAP[s.server];
     return { power: srv.top10_total, name: srv.server + ' Top10連盟合計' };
@@ -5197,7 +5585,7 @@ function simulate() {
     winner = '接戦 — 拮抗した戦闘'; winnerCls = 'draw';
     verdict = '戦力差10%未満。兵種相性・編成・育成の微差で勝敗が入れ替わる領域';
   } else {
-    const winSide = B.ecp > R.ecp ? 'BLUE' : 'RED';
+    const winSide = B.ecp > R.ecp ? '密林氏族' : '湿地氏族';
     winnerCls = B.ecp > R.ecp ? 'blue' : 'red';
     if (diffPct < 30) { winner = winSide + ' 優勢勝利'; verdict = '実効戦力差 ' + diffPct.toFixed(1) + '%。確実な勝利が見込める'; }
     else if (diffPct < 60) { winner = winSide + ' 圧勝'; verdict = '実効戦力差 ' + diffPct.toFixed(1) + '%。相手の主力を壊滅できる'; }
@@ -5215,7 +5603,7 @@ function simulate() {
     <div class="red-side-fill" style="flex: ${rShare}">${rShare.toFixed(1)}%</div>`;
 
   function br(side, S) {
-    const clr = side === 'BLUE' ? 'var(--blue)' : 'var(--red)';
+    const clr = side === '密林氏族' ? 'var(--blue)' : 'var(--red)';
     const icons = { tank: '🛡 TANK', missile: '🚀 MISSILE', aircraft: '✈ AIRCRAFT' };
     return `<div class="breakdown-side">
       <h4 style="color:${clr}">${side} — ${S.name}</h4>
@@ -5228,13 +5616,13 @@ function simulate() {
       <div class="breakdown-row"><span>実効戦力 ECP</span><span>${fmt.b(S.ecp)}</span></div>
     </div>`;
   }
-  document.getElementById('result-breakdown').innerHTML = br('BLUE', B) + br('RED', R);
+  document.getElementById('result-breakdown').innerHTML = br('密林氏族', B) + br('湿地氏族', R);
 
   let insight = verdict + '。';
-  if (B.rawPower < R.rawPower && B.ecp > R.ecp) insight += '<br><strong>下剋上注目</strong>: BLUEは表示戦力で劣るが、相性・編成・育成で実効戦力が逆転。';
-  else if (R.rawPower < B.rawPower && R.ecp > B.ecp) insight += '<br><strong>下剋上注目</strong>: REDは表示戦力で劣るが、相性・編成・育成で実効戦力が逆転。';
+  if (B.rawPower < R.rawPower && B.ecp > R.ecp) insight += '<br><strong>下剋上注目</strong>: 密林氏族は表示戦力で劣るが、相性・編成・育成で実効戦力が逆転。';
+  else if (R.rawPower < B.rawPower && R.ecp > B.ecp) insight += '<br><strong>下剋上注目</strong>: 湿地氏族は表示戦力で劣るが、相性・編成・育成で実効戦力が逆転。';
   if (B.matchup > 1 || R.matchup > 1) {
-    const adv = B.matchup > 1 ? 'BLUE' : 'RED';
+    const adv = B.matchup > 1 ? '密林氏族' : '湿地氏族';
     insight += '<br>兵種相性で ' + adv + ' が +20% の優位を獲得。相性を変えれば戦況は大きく変わる。';
   }
   document.getElementById('result-insight').innerHTML = insight;
@@ -5260,6 +5648,7 @@ function init() {
   renderS6Simulator();
   renderServers();
   renderAlliances();
+  renderAllianceSegmentHeatmap();
   renderCommanders();
 
   // Alliance filters
